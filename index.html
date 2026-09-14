@@ -1978,6 +1978,13 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
 }
 </style>
 
+
+<style>
+.ft-api-error b{font-size:10px!important}
+.ft-api-error span{font-size:11px!important;line-height:1.6!important}
+.ft-api-error button{font-size:9px!important}
+</style>
+
 </head>
 <body>
 <div aria-hidden="true" class="noise"></div>
@@ -2722,6 +2729,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     history:[],
     analyses:[],
     loading:false,
+    loadingText:"",
     error:"",
     finalReply:""
   };
@@ -2739,6 +2747,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       history:[],
       analyses:[],
       loading:false,
+      loadingText:"",
       error:"",
       finalReply:""
     };
@@ -2852,16 +2861,16 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
           <div class="ft-prompt ${state.loading?"is-loading":""}">
             <span>${s.name}</span>
             <p>${state.loading
-              ? `<span class="ft-thinking"><i></i><i></i><i></i>${s.name}正在回覆…</span>`
+              ? `<span class="ft-thinking"><i></i><i></i><i></i>${esc(state.loadingText || (s.name+"正在回覆…"))}</span>`
               : esc(state.currentPrompt)
             }</p>
           </div>
 
           ${state.error?`
             <div class="ft-api-error">
-              <b>連線暫時失敗</b>
+              <b>AI 暫時忙碌</b>
               <span>${esc(state.error)}</span>
-              <button data-action="retry">重新嘗試</button>
+              <button data-action="retry">再試一次</button>
             </div>`:""}
 
           ${!state.loading?`
@@ -2912,7 +2921,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     return msgs;
   }
 
-  async function callAI(userAnswer){
+  async function callAI(userAnswer, attempt=0){
     const payload={
       character:state.route,
       turn:state.turn+1,
@@ -2930,16 +2939,28 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     try{
       data=await res.json();
     }catch{
-      throw new Error("後端沒有回傳可讀取的資料");
+      throw new Error("AI 現在有點忙，請稍後再試。");
+    }
+
+    if(res.status===429 && attempt===0){
+      const waitSec=Math.max(3,Math.min(30,Number(data?.retryAfter)||6));
+      state.loadingText=`${ROUTES[state.route].name}正在整理想法… ${waitSec} 秒後自動重試`;
+      render();
+      await new Promise(resolve=>setTimeout(resolve,waitSec*1000));
+      state.loadingText=`${ROUTES[state.route].name}正在重新回覆…`;
+      render();
+      return callAI(userAnswer,1);
     }
 
     if(!res.ok){
-      const detail=data?.detail||data?.error||("HTTP "+res.status);
-      throw new Error(detail);
+      if(res.status===429){
+        throw new Error("免費額度目前比較忙，請等一下再試一次。");
+      }
+      throw new Error("AI 現在有點忙，請稍後再試。");
     }
 
     if(!data?.reply){
-      throw new Error("AI 沒有產生下一句");
+      throw new Error("AI 現在有點忙，請稍後再試。");
     }
     return data;
   }
@@ -2967,6 +2988,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     state.history.push({speaker:"育哲",text});
 
     state.loading=true;
+    state.loadingText=`${s.name}正在回覆…`;
     state.error="";
     render();
 
@@ -2984,6 +3006,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
         state.finalReply=data.reply;
         state.history.push({speaker:s.name,text:data.reply});
         state.loading=false;
+        state.loadingText="";
         state.screen="end";
         render();
         return;
@@ -2992,12 +3015,14 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       state.currentPrompt=data.reply;
       state.turn++;
       state.loading=false;
+      state.loadingText="";
       state.error="";
       render();
 
     }catch(err){
       state.loading=false;
-      state.error=err?.message||String(err);
+      state.loadingText="";
+      state.error=err?.message||"AI 現在有點忙，請稍後再試。";
       render();
     }
   }
@@ -3011,11 +3036,11 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       return;
     }
 
-    // Remove the last user answer temporarily so callAI history doesn't duplicate it.
     const userAnswer=last.text;
     state.history.pop();
 
     state.loading=true;
+    state.loadingText=`${ROUTES[state.route].name}正在重新回覆…`;
     state.error="";
     render();
 
@@ -3034,6 +3059,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
         state.finalReply=data.reply;
         state.history.push({speaker:ROUTES[state.route].name,text:data.reply});
         state.loading=false;
+        state.loadingText="";
         state.screen="end";
         render();
         return;
@@ -3042,11 +3068,13 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       state.currentPrompt=data.reply;
       state.turn++;
       state.loading=false;
+      state.loadingText="";
       render();
     }catch(err){
       state.history.push({speaker:"育哲",text:userAnswer});
       state.loading=false;
-      state.error=err?.message||String(err);
+      state.loadingText="";
+      state.error=err?.message||"AI 現在有點忙，請稍後再試。";
       render();
     }
   }
