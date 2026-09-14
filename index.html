@@ -1985,6 +1985,19 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
 .ft-api-error button{font-size:9px!important}
 </style>
 
+
+<style>
+.ft-result-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.ft-result-actions button{
+  min-width:150px;
+}
+</style>
+
 </head>
 <body>
 <div aria-hidden="true" class="noise"></div>
@@ -3162,8 +3175,9 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
           </div>
 
           <div class="ft-result-actions">
-            <button class="vn2-primary" data-action="restart">重新挑戰此案例</button>
+            <button class="vn2-primary" data-action="export-jpg">匯出結果 JPG</button>
             <button class="vn2-secondary" data-action="log">查看完整對話</button>
+            <button class="vn2-secondary" data-action="restart">重新挑戰此案例</button>
           </div>
 
           <div class="ft-calibration">
@@ -3171,6 +3185,290 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
           </div>
         </div>
       </div>`;
+  }
+
+
+  function canvasRoundRect(ctx,x,y,w,h,r){
+    const rr=Math.min(r,w/2,h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rr,y);
+    ctx.arcTo(x+w,y,x+w,y+h,rr);
+    ctx.arcTo(x+w,y+h,x,y+h,rr);
+    ctx.arcTo(x,y+h,x,y,rr);
+    ctx.arcTo(x,y,x+w,y,rr);
+    ctx.closePath();
+  }
+
+  function wrapCanvasText(ctx,text,maxWidth){
+    const chars=[...String(text||"")];
+    const lines=[];
+    let line="";
+    for(const ch of chars){
+      if(ch==="\n"){
+        lines.push(line);
+        line="";
+        continue;
+      }
+      const test=line+ch;
+      if(ctx.measureText(test).width>maxWidth && line){
+        lines.push(line);
+        line=ch;
+      }else{
+        line=test;
+      }
+    }
+    if(line || !lines.length)lines.push(line);
+    return lines;
+  }
+
+  function getExportData(){
+    const s=ROUTES[state.route];
+    const scores=finalScores();
+    const g=finalGrade(scores);
+    return {
+      caseName:s.name,
+      caseCode:s.code,
+      theme:s.theme,
+      themeZh:s.themeZh,
+      grade:g[0],
+      gradeLabel:g[1],
+      gradeRange:g[2],
+      gradeDesc:g[3],
+      pattern:narrative(),
+      scores,
+      finalReply:state.finalReply,
+      history:[...state.history]
+    };
+  }
+
+  async function exportResultJpg(){
+    const d=getExportData();
+
+    // Wait for web fonts currently used by the page when supported.
+    if(document.fonts?.ready){
+      try{await document.fonts.ready;}catch{}
+    }
+
+    const W=1400;
+    const margin=92;
+    const innerW=W-margin*2;
+    const gold="#d0a74f";
+    const goldSoft="#907443";
+    const text="#eee7dc";
+    const muted="#a79f94";
+    const dim="#6f6a63";
+    const panel="#111315";
+    const line="#2a2926";
+    const bg="#090b0d";
+
+    // First measuring canvas
+    const measure=document.createElement("canvas");
+    measure.width=W;
+    measure.height=100;
+    const mctx=measure.getContext("2d");
+
+    let H=0;
+    H+=100; // top padding
+    H+=64;  // brand
+    H+=90;  // grade header
+    H+=110; // description
+    H+=210; // scores
+    H+=150; // pattern
+    H+=80;  // dialogue heading
+
+    // Measure dialogue cards
+    const measuredDialogue=[];
+    for(const item of d.history){
+      const isUser=item.speaker==="育哲";
+      mctx.font='500 28px "Noto Sans TC","Microsoft JhengHei",sans-serif';
+      const lines=wrapCanvasText(mctx,item.text,innerW-88);
+      const cardH=62 + lines.length*44 + 34;
+      measuredDialogue.push({item,isUser,lines,cardH});
+      H+=cardH+22;
+    }
+    H+=100;
+
+    // Limit to a safe but generous canvas size.
+    H=Math.max(1800,Math.min(H,12000));
+
+    const canvas=document.createElement("canvas");
+    canvas.width=W;
+    canvas.height=H;
+    const ctx=canvas.getContext("2d");
+
+    // Background
+    ctx.fillStyle=bg;
+    ctx.fillRect(0,0,W,H);
+
+    // Subtle vertical gradient
+    const grad=ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,"rgba(208,167,79,.055)");
+    grad.addColorStop(.28,"rgba(208,167,79,.012)");
+    grad.addColorStop(1,"rgba(0,0,0,0)");
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,0,W,H);
+
+    let y=94;
+
+    // Brand
+    ctx.fillStyle=gold;
+    ctx.font='700 20px Arial,sans-serif';
+    ctx.letterSpacing="4px";
+    ctx.fillText("STRATEGY+  ·  AI SCENARIO REPORT",margin,y);
+    y+=34;
+    ctx.strokeStyle="rgba(208,167,79,.28)";
+    ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(margin,y);
+    ctx.lineTo(W-margin,y);
+    ctx.stroke();
+    y+=50;
+
+    // Case
+    ctx.fillStyle=muted;
+    ctx.font='600 18px Arial,sans-serif';
+    ctx.fillText(`${d.caseCode}  ·  ${d.theme}`,margin,y);
+    y+=44;
+
+    ctx.fillStyle=text;
+    ctx.font='700 44px "Noto Serif TC","Microsoft JhengHei",serif';
+    ctx.fillText(`${d.caseName}｜${d.themeZh}`,margin,y);
+    y+=70;
+
+    // Grade line
+    ctx.fillStyle=gold;
+    ctx.font='800 92px Georgia,serif';
+    ctx.fillText(d.grade,margin,y+58);
+
+    ctx.fillStyle=text;
+    ctx.font='700 30px Arial,sans-serif';
+    ctx.fillText(d.gradeLabel,margin+150,y+8);
+    ctx.fillStyle=goldSoft;
+    ctx.font='500 22px "Noto Sans TC","Microsoft JhengHei",sans-serif';
+    ctx.fillText(d.gradeRange,margin+150,y+45);
+    y+=118;
+
+    // Grade description
+    ctx.fillStyle=muted;
+    ctx.font='500 26px "Noto Sans TC","Microsoft JhengHei",sans-serif';
+    const descLines=wrapCanvasText(ctx,d.gradeDesc,innerW);
+    for(const ln of descLines){
+      ctx.fillText(ln,margin,y);
+      y+=40;
+    }
+    y+=36;
+
+    // Score panel
+    canvasRoundRect(ctx,margin,y,innerW,190,18);
+    ctx.fillStyle=panel;
+    ctx.fill();
+    ctx.strokeStyle="rgba(208,167,79,.20)";
+    ctx.stroke();
+
+    const scoreItems=[
+      ["情緒價值",d.scores.emotion],
+      ["界線感",d.scores.boundary],
+      ["主導力",d.scores.frame],
+      ["判斷力",d.scores.social]
+    ];
+    const colW=innerW/4;
+    scoreItems.forEach(([label,val],i)=>{
+      const cx=margin+colW*i+colW/2;
+      if(i>0){
+        ctx.strokeStyle=line;
+        ctx.beginPath();
+        ctx.moveTo(margin+colW*i,y+38);
+        ctx.lineTo(margin+colW*i,y+152);
+        ctx.stroke();
+      }
+      ctx.fillStyle=gold;
+      ctx.font='700 48px Georgia,serif';
+      ctx.textAlign="center";
+      ctx.fillText(String(Math.round(val)),cx,y+84);
+      ctx.fillStyle=muted;
+      ctx.font='600 20px "Noto Sans TC","Microsoft JhengHei",sans-serif';
+      ctx.fillText(label,cx,y+130);
+    });
+    ctx.textAlign="left";
+    y+=228;
+
+    // Overall pattern
+    ctx.fillStyle=goldSoft;
+    ctx.font='700 18px Arial,sans-serif';
+    ctx.fillText("OVERALL PATTERN",margin,y);
+    y+=38;
+    ctx.fillStyle=text;
+    ctx.font='500 26px "Noto Sans TC","Microsoft JhengHei",sans-serif';
+    const patLines=wrapCanvasText(ctx,d.pattern,innerW);
+    for(const ln of patLines){
+      ctx.fillText(ln,margin,y);
+      y+=41;
+    }
+    y+=54;
+
+    // Dialogue title
+    ctx.strokeStyle="rgba(208,167,79,.22)";
+    ctx.beginPath();
+    ctx.moveTo(margin,y);
+    ctx.lineTo(W-margin,y);
+    ctx.stroke();
+    y+=48;
+
+    ctx.fillStyle=gold;
+    ctx.font='700 20px Arial,sans-serif';
+    ctx.fillText("FULL DIALOGUE  ·  5 ROUND CASE LOG",margin,y);
+    y+=48;
+
+    // Dialogue cards
+    for(const row of measuredDialogue){
+      const {item,isUser,lines,cardH}=row;
+      canvasRoundRect(ctx,margin,y,innerW,cardH,14);
+      ctx.fillStyle=isUser ? "rgba(208,167,79,.045)" : "#101214";
+      ctx.fill();
+      ctx.strokeStyle=isUser ? "rgba(208,167,79,.28)" : "#252724";
+      ctx.stroke();
+
+      ctx.fillStyle=isUser ? gold : goldSoft;
+      ctx.font='700 18px "Noto Sans TC","Microsoft JhengHei",sans-serif';
+      ctx.fillText(isUser ? "育哲  ·  PLAYER RESPONSE" : `${item.speaker}  ·  AI DIALOGUE`,margin+32,y+36);
+
+      ctx.fillStyle=isUser ? "#d9d1c7" : text;
+      ctx.font=isUser
+        ? '500 28px "Noto Sans TC","Microsoft JhengHei",sans-serif'
+        : '500 28px "Noto Serif TC","Microsoft JhengHei",serif';
+
+      let ty=y+82;
+      for(const ln of lines){
+        ctx.fillText(ln,margin+32,ty);
+        ty+=44;
+      }
+      y+=cardH+22;
+    }
+
+    // Footer
+    y=Math.min(y+34,H-54);
+    ctx.fillStyle=dim;
+    ctx.font='500 16px Arial,sans-serif';
+    ctx.fillText("Generated by STRATEGY+ · AI Scenario Lab",margin,y);
+    ctx.textAlign="right";
+    ctx.fillText(new Date().toLocaleString("zh-TW"),W-margin,y);
+    ctx.textAlign="left";
+
+    // Download JPEG
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",0.94));
+    if(!blob){
+      alert("JPG 產生失敗，請再試一次。");
+      return;
+    }
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    const safeCase=(d.caseName||"case").replace(/[\\/:*?"<>|]/g,"");
+    a.href=url;
+    a.download=`STRATEGY+_${safeCase}_${d.grade}_結果報告.jpg`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
   }
 
   function renderLog(){
@@ -3229,6 +3527,8 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       retryLast();
     }else if(action==="restart"){
       reset(state.route);
+    }else if(action==="export-jpg"){
+      exportResultJpg();
     }else if(action==="log"){
       renderLog();
     }else if(action==="close-log"){
