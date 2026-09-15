@@ -2127,6 +2127,45 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
 }
 </style>
 
+
+<style>
+/* FINAL REPORT — auto height only after the 5-round simulation is complete */
+.vn2-app.ft-result-mode{
+  height:auto!important;
+  min-height:820px!important;
+  overflow:hidden!important;
+  align-items:stretch!important;
+}
+.vn2-app.ft-result-mode .vn2-side{
+  min-height:100%!important;
+}
+.vn2-app.ft-result-mode .vn2-game{
+  height:auto!important;
+  min-height:820px!important;
+  overflow:visible!important;
+}
+.vn2-app.ft-result-mode .ft-screen{
+  height:auto!important;
+  min-height:820px!important;
+  overflow:visible!important;
+  padding-bottom:54px!important;
+}
+.vn2-app.ft-result-mode .ft-result{
+  padding-bottom:18px!important;
+}
+@media(max-width:760px){
+  .vn2-app.ft-result-mode{
+    height:auto!important;
+    min-height:860px!important;
+  }
+  .vn2-app.ft-result-mode .vn2-game,
+  .vn2-app.ft-result-mode .ft-screen{
+    height:auto!important;
+    min-height:860px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div aria-hidden="true" class="noise"></div>
@@ -2881,6 +2920,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
   }[m]));
 
   function reset(route=null){
+    app.classList.remove("ft-result-mode");
     state={
       screen:route?"intro":"select",
       route,
@@ -2914,6 +2954,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
   }
 
   function renderSelect(){
+    app.classList.remove("ft-result-mode");
     game.innerHTML=`
       <div class="ft-select">
         <div class="ft-select-head">
@@ -2937,6 +2978,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
   }
 
   function renderIntro(){
+    app.classList.remove("ft-result-mode");
     const s=ROUTES[state.route];
     game.innerHTML=`
       <div class="ft-screen">
@@ -2971,6 +3013,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
   }
 
   function renderPlay(){
+    app.classList.remove("ft-result-mode");
     const s=ROUTES[state.route];
 
     game.innerHTML=`
@@ -3335,6 +3378,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
   }
 
   function renderEnd(){
+    app.classList.add("ft-result-mode");
     const s=ROUTES[state.route];
     const scores=finalScores();
     const g=finalGrade(scores);
