@@ -2166,6 +2166,59 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
 }
 </style>
 
+
+<style>
+@media(min-width:1180px){
+  .ft-case-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:16px!important;
+  }
+  .ft-case{
+    min-width:0!important;
+  }
+  .ft-case h4,
+  .ft-case-title{
+    font-size:clamp(20px,1.7vw,29px)!important;
+  }
+}
+@media(min-width:760px) and (max-width:1179px){
+  .ft-case-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .ft-case-grid .ft-case:last-child{
+    grid-column:1 / -1;
+  }
+}
+</style>
+
+
+<style>
+/* CASE 03 badge: prevent the two names from overflowing the circular emblem */
+.ft-case-badge,
+.vn2-case-badge,
+.ft-case-mark,
+.vn2-case-mark{
+  overflow:hidden!important;
+  white-space:nowrap!important;
+  text-overflow:clip!important;
+}
+.ft-case-badge{
+  font-size:clamp(13px,1.25vw,18px)!important;
+  line-height:1.1!important;
+  letter-spacing:0!important;
+}
+@media(min-width:1180px){
+  .ft-case-grid .ft-case:nth-child(3) .ft-case-badge,
+  .ft-case-grid .ft-case:nth-child(3) .vn2-case-badge,
+  .ft-case-grid .ft-case:nth-child(3) .ft-case-mark,
+  .ft-case-grid .ft-case:nth-child(3) .vn2-case-mark{
+    font-size:15px!important;
+    max-width:64px!important;
+    text-align:center!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div aria-hidden="true" class="noise"></div>
@@ -2899,6 +2952,17 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       introTitle:"你很愛小咪，但她意外發現，你對恩瑞的感覺似乎不只是朋友。",
       intro:"小咪知道你是雙性戀。她真正介意的不是恩瑞是男生，而是你已經對另一個人心動，卻沒有先讓她知道。",
       opening:"育哲，我剛剛看到你跟恩瑞在一起的樣子了。你們那個互動真的不像普通朋友，我甚至覺得你看他的眼神，跟你以前看我的時候很像。你不要先跟我說我想太多，我只想聽你老實回答——你是不是喜歡恩瑞？"
+    },
+    triple:{
+      code:"CASE 03",
+      name:"齊齊 × 小咪",
+      badge:"齊 × 咪",
+      theme:"BALANCE UNDER PRESSURE",
+      themeZh:"雙線親密資源分配事件",
+      tags:["三人修羅場","公平分配","成人關係"],
+      introTitle:"兩個人都想先得到你，而且誰都不想先退。",
+      intro:"齊齊、小咪和育哲三個成年人一起出遊，彼此都知道這趟旅行帶有親密關係的可能。抵達住宿地點後，齊齊和小咪開始爭論今晚到底誰可以先和育哲發生關係。你的任務不是隨便選一個，而是做出讓兩邊都能理解的公平決策。",
+      opening:"我們三個才剛到住宿的地方，齊齊跟小咪就直接吵起來了。齊齊說她想今晚先跟你發生關係，小咪也不肯讓，還說這趟一路都是她在退。現在兩個人都看著你，要你自己決定——育哲，今晚到底誰先？"
     }
   };
 
@@ -2963,10 +3027,10 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
           <p>五回合自由對話。從第二題開始，角色會根據育哲上一句回答即時生成下一句，不再從固定題庫抽題。</p>
         </div>
         <div class="ft-case-grid">
-          ${["qiqi","mimi"].map(key=>{
+          ${["qiqi","mimi","triple"].map(key=>{
             const s=ROUTES[key];
             return `<button class="ft-case" data-action="choose" data-route="${key}">
-              <div class="ft-case-top"><span>${s.code}</span><b>${s.name}</b></div>
+              <div class="ft-case-top"><span>${s.code}</span><b>${s.badge||s.name}</b></div>
               <h4>${s.themeZh}</h4>
               <p>${s.intro}</p>
               <div class="ft-tags">${s.tags.map(x=>`<i>${x}</i>`).join("")}</div>
@@ -3192,7 +3256,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
 
       if(state.turn>=4){
         state.finalReply=data.reply;
-        state.history.push({speaker:s.name,text:data.reply});
+        state.history.push({speaker:data.speaker||s.name,text:data.reply});
         state.loading=false;
         state.loadingText="";
         state.screen="end";
