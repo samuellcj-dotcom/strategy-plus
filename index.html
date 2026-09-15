@@ -1998,6 +1998,135 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
 }
 </style>
 
+
+<style>
+.ft-feedback-report{
+  max-width:980px;
+  margin:34px auto 26px;
+  padding-top:30px;
+  border-top:1px solid rgba(208,167,79,.24);
+  text-align:left;
+}
+.ft-feedback-kicker{
+  color:#b8914c;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.22em;
+  margin-bottom:8px;
+}
+.ft-feedback-report>h4{
+  margin:0 0 20px;
+  color:#f0ebe2;
+  font-family:"Noto Serif TC","Microsoft JhengHei",serif;
+  font-size:25px;
+}
+.ft-dimension-review{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.ft-dim-card{
+  padding:18px;
+  border:1px solid #2b2925;
+  background:#101214;
+}
+.ft-dim-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  color:#d7d0c7;
+  font-size:14px;
+  font-weight:700;
+}
+.ft-dim-head b{
+  color:#d0a74f;
+  font:700 25px Georgia,serif;
+}
+.ft-dim-bar{
+  height:3px;
+  margin:10px 0 11px;
+  background:#252521;
+  overflow:hidden;
+}
+.ft-dim-bar i{
+  display:block;
+  height:100%;
+  background:#b8914c;
+}
+.ft-dim-card p{
+  margin:0;
+  color:#928b82;
+  font-size:13px;
+  line-height:1.65;
+}
+.ft-turn-review,.ft-strength-box,.ft-advice-box{
+  margin-top:14px;
+  padding:20px;
+  border:1px solid #292824;
+  background:#0f1113;
+}
+.ft-turn-review h5,.ft-strength-box h5,.ft-advice-box h5{
+  margin:0 0 13px;
+  color:#e8e1d7;
+  font-size:16px;
+}
+.ft-turn-note{
+  display:grid;
+  grid-template-columns:86px 1fr;
+  gap:14px;
+  padding:11px 0;
+  border-top:1px solid #20211f;
+}
+.ft-turn-note:first-of-type{border-top:0}
+.ft-turn-note span{
+  padding-top:4px;
+  color:#8f7441;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.12em;
+}
+.ft-turn-note p{
+  margin:0;
+  color:#aaa39a;
+  font-size:14px;
+  line-height:1.75;
+}
+.ft-chip-wrap{display:flex;flex-wrap:wrap;gap:8px}
+.ft-chip-wrap span{
+  padding:8px 11px;
+  border:1px solid rgba(208,167,79,.25);
+  background:rgba(208,167,79,.035);
+  color:#c9b487;
+  font-size:12px;
+}
+.ft-advice-box{
+  border-color:rgba(208,167,79,.28);
+  background:linear-gradient(180deg,rgba(208,167,79,.055),rgba(15,17,19,.96));
+}
+.ft-advice-box small{
+  color:#b8914c;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.18em;
+}
+.ft-advice-box h5{margin-top:6px}
+.ft-advice-box ol{
+  margin:0;
+  padding-left:22px;
+  color:#c9c1b7;
+}
+.ft-advice-box li{
+  padding:5px 0 5px 5px;
+  font-size:14px;
+  line-height:1.75;
+}
+@media(max-width:720px){
+  .ft-dimension-review{grid-template-columns:1fr}
+  .ft-turn-note{grid-template-columns:70px 1fr}
+}
+</style>
+
 </head>
 <body>
 <div aria-hidden="true" class="noise"></div>
@@ -3012,6 +3141,9 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
         scores:data.scores||{},
         pattern:data.pattern||"balanced",
         focus:data.focus||"",
+        feedback:data.feedback||"",
+        suggestion:data.suggestion||"",
+        highlight:data.highlight||"",
         model:data.model||""
       });
 
@@ -3065,6 +3197,9 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
         scores:data.scores||{},
         pattern:data.pattern||"balanced",
         focus:data.focus||"",
+        feedback:data.feedback||"",
+        suggestion:data.suggestion||"",
+        highlight:data.highlight||"",
         model:data.model||""
       });
 
@@ -3135,6 +3270,70 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     return map[p]||map.balanced;
   }
 
+
+  function dimensionReview(scores){
+    const items=[
+      {key:"emotion",label:"理解力",value:Math.round(scores.emotion)},
+      {key:"boundary",label:"界線感",value:Math.round(scores.boundary)},
+      {key:"frame",label:"承擔力",value:Math.round(scores.frame)},
+      {key:"social",label:"判斷力",value:Math.round(scores.social)}
+    ];
+    const desc=v=>{
+      if(v>=90)return "非常成熟：這一項已能穩定兼顧感受、立場與實際行動。";
+      if(v>=80)return "成熟：整體方向很好，但仍有一個重要細節可以再講清楚。";
+      if(v>=65)return "尚可：方向合理，但部分回答仍偏抽象、安撫式或缺乏具體行動。";
+      if(v>=50)return "需要補強：這一項容易出現閃避、討好、被動或界線不清。";
+      return "優先修正：核心問題尚未被正面處理，容易直接拉低整體 Rank。";
+    };
+    return items.map(x=>({...x,desc:desc(x.value)}));
+  }
+
+  function optimizationAdvice(scores){
+    const sorted=[...dimensionReview(scores)].sort((a,b)=>a.value-b.value);
+    const fallback={
+      emotion:"先說出你理解對方真正受傷或擔心的是什麼，再談自己的立場；不要只用「我懂、對不起」收掉問題。",
+      boundary:"把你願意接受、不能接受，以及和第三人後續會怎麼互動講清楚；避免完全放任或一刀切。",
+      frame:"除了安撫對方，也要說出你自己的真實選擇、下一步，以及你願意承擔什麼後果。",
+      social:"把短期情緒以外的長期後果一起納入，例如信任怎麼重建、後續聯絡原則、如果感情持續該怎麼處理。"
+    };
+
+    const ai=(state.analyses||[])
+      .map(a=>(a.suggestion||"").trim())
+      .filter(Boolean);
+
+    const unique=[];
+    const seen=new Set();
+    [...ai].reverse().forEach(t=>{
+      const key=t.replace(/\s+/g,"").slice(0,28);
+      if(!seen.has(key) && unique.length<2){
+        seen.add(key);
+        unique.push(t);
+      }
+    });
+
+    const weakest=sorted[0];
+    const second=sorted[1];
+    unique.push(`優先補強「${weakest.label}」：${fallback[weakest.key]}`);
+    if(unique.length<3){
+      unique.push(`第二優先是「${second.label}」：${fallback[second.key]}`);
+    }
+    return unique.slice(0,3);
+  }
+
+  function highlightList(){
+    const out=[];
+    const seen=new Set();
+    (state.analyses||[]).forEach(a=>{
+      const t=(a.highlight||"").trim();
+      const key=t.replace(/\s+/g,"");
+      if(t && !seen.has(key)){
+        seen.add(key);
+        out.push(t);
+      }
+    });
+    return out.slice(0,3);
+  }
+
   function renderEnd(){
     const s=ROUTES[state.route];
     const scores=finalScores();
@@ -3172,6 +3371,47 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
             <div><b>${Math.round(scores.boundary)}</b><span>界線感</span></div>
             <div><b>${Math.round(scores.frame)}</b><span>承擔力</span></div>
             <div><b>${Math.round(scores.social)}</b><span>判斷力</span></div>
+          </div>
+
+          <div class="ft-feedback-report">
+            <div class="ft-feedback-kicker">AI PERFORMANCE REVIEW</div>
+            <h4>這次你為什麼拿到這個分數？</h4>
+
+            <div class="ft-dimension-review">
+              ${dimensionReview(scores).map(d=>`
+                <div class="ft-dim-card">
+                  <div class="ft-dim-head"><span>${d.label}</span><b>${d.value}</b></div>
+                  <div class="ft-dim-bar"><i style="width:${Math.max(0,Math.min(100,d.value))}%"></i></div>
+                  <p>${d.desc}</p>
+                </div>
+              `).join("")}
+            </div>
+
+            ${(state.analyses||[]).some(a=>a.feedback)?`
+              <div class="ft-turn-review">
+                <h5>五回合關鍵診斷</h5>
+                ${(state.analyses||[]).map((a,i)=>a.feedback?`
+                  <div class="ft-turn-note">
+                    <span>ROUND ${String(i+1).padStart(2,"0")}</span>
+                    <p>${esc(a.feedback)}</p>
+                  </div>`:"").join("")}
+              </div>`:""}
+
+            ${highlightList().length?`
+              <div class="ft-strength-box">
+                <h5>這次最值得保留</h5>
+                <div class="ft-chip-wrap">
+                  ${highlightList().map(x=>`<span>${esc(x)}</span>`).join("")}
+                </div>
+              </div>`:""}
+
+            <div class="ft-advice-box">
+              <small>NEXT ATTEMPT</small>
+              <h5>如果想往更高 Rank，下一輪這樣優化</h5>
+              <ol>
+                ${optimizationAdvice(scores).map(x=>`<li>${esc(x)}</li>`).join("")}
+              </ol>
+            </div>
           </div>
 
           <div class="ft-result-actions">
@@ -3237,7 +3477,9 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       pattern:narrative(),
       scores,
       finalReply:state.finalReply,
-      history:[...state.history]
+      history:[...state.history],
+      dimensionReview:dimensionReview(scores),
+      optimizationAdvice:optimizationAdvice(scores)
     };
   }
 
@@ -3274,6 +3516,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     H+=110; // description
     H+=210; // scores
     H+=150; // pattern
+    H+=360; // performance review
     H+=80;  // dialogue heading
 
     // Measure dialogue cards
@@ -3405,6 +3648,31 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       y+=41;
     }
     y+=54;
+
+
+    // Performance review / optimization advice
+    ctx.fillStyle=goldSoft;
+    ctx.font='700 18px Arial,sans-serif';
+    ctx.fillText("PERFORMANCE REVIEW",margin,y);
+    y+=38;
+
+    const weakest=[...(d.dimensionReview||[])].sort((a,b)=>a.value-b.value)[0];
+    ctx.fillStyle=text;
+    ctx.font='600 25px "Noto Sans TC","Microsoft JhengHei",sans-serif';
+    ctx.fillText(`優先補強：${weakest?.label||"—"}  ${weakest?.value??""}`,margin,y);
+    y+=42;
+
+    ctx.fillStyle=muted;
+    ctx.font='500 23px "Noto Sans TC","Microsoft JhengHei",sans-serif';
+    for(const advice of (d.optimizationAdvice||[])){
+      const ls=wrapCanvasText(ctx,"• "+advice,innerW);
+      for(const ln of ls){
+        ctx.fillText(ln,margin,y);
+        y+=36;
+      }
+      y+=8;
+    }
+    y+=34;
 
     // Dialogue title
     ctx.strokeStyle="rgba(208,167,79,.22)";
