@@ -3486,7 +3486,6 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
   async function exportResultJpg(){
     const d=getExportData();
 
-    // Wait for web fonts currently used by the page when supported.
     if(document.fonts?.ready){
       try{await document.fonts.ready;}catch{}
     }
@@ -3503,47 +3502,92 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     const line="#2a2926";
     const bg="#090b0d";
 
-    // First measuring canvas
+    // ---------- PASS 1: measure everything ----------
     const measure=document.createElement("canvas");
     measure.width=W;
     measure.height=100;
     const mctx=measure.getContext("2d");
 
-    let H=0;
-    H+=100; // top padding
-    H+=64;  // brand
-    H+=90;  // grade header
-    H+=110; // description
-    H+=210; // scores
-    H+=150; // pattern
-    H+=360; // performance review
-    H+=80;  // dialogue heading
+    const measureWrapped=(font,textValue,width,lineHeight)=>{
+      mctx.font=font;
+      const lines=wrapCanvasText(mctx,textValue,width);
+      return {lines,height:Math.max(1,lines.length)*lineHeight};
+    };
 
-    // Measure dialogue cards
+    // Description
+    const descM=measureWrapped(
+      '500 26px "Noto Sans TC","Microsoft JhengHei",sans-serif',
+      d.gradeDesc,
+      innerW,
+      40
+    );
+
+    // Pattern
+    const patM=measureWrapped(
+      '500 26px "Noto Sans TC","Microsoft JhengHei",sans-serif',
+      d.pattern,
+      innerW,
+      41
+    );
+
+    // Optimization advice
+    const adviceMeasured=(d.optimizationAdvice||[]).map(advice=>{
+      return measureWrapped(
+        '500 23px "Noto Sans TC","Microsoft JhengHei",sans-serif',
+        "• "+advice,
+        innerW,
+        36
+      );
+    });
+
+    // Dialogue
     const measuredDialogue=[];
     for(const item of d.history){
       const isUser=item.speaker==="育哲";
       mctx.font='500 28px "Noto Sans TC","Microsoft JhengHei",sans-serif';
       const lines=wrapCanvasText(mctx,item.text,innerW-88);
-      const cardH=62 + lines.length*44 + 34;
+      const cardH=62 + Math.max(1,lines.length)*44 + 34;
       measuredDialogue.push({item,isUser,lines,cardH});
-      H+=cardH+22;
     }
-    H+=100;
 
-    // Limit to a safe but generous canvas size.
-    H=Math.max(1800,Math.min(H,12000));
+    // Calculate exact height.
+    let H=0;
+    H+=94;                  // initial y
+    H+=34+50;               // brand + line spacing
+    H+=44;                  // case metadata
+    H+=70;                  // case title
+    H+=118;                 // grade
+    H+=descM.height+36;      // grade description
+    H+=228;                 // score panel
+    H+=38+patM.height+54;    // pattern
+    H+=38+42;                // performance review title + weakest row
+
+    // Advice block height
+    for(const a of adviceMeasured){
+      H+=a.height+8;
+    }
+    H+=34;
+
+    H+=48+48;               // dialogue divider + title
+
+    for(const row of measuredDialogue){
+      H+=row.cardH+22;
+    }
+
+    H+=120;                 // footer + bottom safe area
+
+    // Never clip. Keep only a reasonable minimum.
+    H=Math.max(1900,Math.ceil(H));
 
     const canvas=document.createElement("canvas");
     canvas.width=W;
     canvas.height=H;
     const ctx=canvas.getContext("2d");
 
-    // Background
+    // ---------- PASS 2: draw ----------
     ctx.fillStyle=bg;
     ctx.fillRect(0,0,W,H);
 
-    // Subtle vertical gradient
     const grad=ctx.createLinearGradient(0,0,0,H);
     grad.addColorStop(0,"rgba(208,167,79,.055)");
     grad.addColorStop(.28,"rgba(208,167,79,.012)");
@@ -3556,9 +3600,9 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     // Brand
     ctx.fillStyle=gold;
     ctx.font='700 20px Arial,sans-serif';
-    ctx.letterSpacing="4px";
     ctx.fillText("STRATEGY+  ·  AI SCENARIO REPORT",margin,y);
     y+=34;
+
     ctx.strokeStyle="rgba(208,167,79,.28)";
     ctx.lineWidth=1;
     ctx.beginPath();
@@ -3578,7 +3622,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     ctx.fillText(`${d.caseName}｜${d.themeZh}`,margin,y);
     y+=70;
 
-    // Grade line
+    // Rank
     ctx.fillStyle=gold;
     ctx.font='800 92px Georgia,serif';
     ctx.fillText(d.grade,margin,y+58);
@@ -3586,6 +3630,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     ctx.fillStyle=text;
     ctx.font='700 30px Arial,sans-serif';
     ctx.fillText(d.gradeLabel,margin+150,y+8);
+
     ctx.fillStyle=goldSoft;
     ctx.font='500 22px "Noto Sans TC","Microsoft JhengHei",sans-serif';
     ctx.fillText(d.gradeRange,margin+150,y+45);
@@ -3594,14 +3639,13 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     // Grade description
     ctx.fillStyle=muted;
     ctx.font='500 26px "Noto Sans TC","Microsoft JhengHei",sans-serif';
-    const descLines=wrapCanvasText(ctx,d.gradeDesc,innerW);
-    for(const ln of descLines){
+    for(const ln of descM.lines){
       ctx.fillText(ln,margin,y);
       y+=40;
     }
     y+=36;
 
-    // Score panel
+    // Scores
     canvasRoundRect(ctx,margin,y,innerW,190,18);
     ctx.fillStyle=panel;
     ctx.fill();
@@ -3615,6 +3659,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       ["判斷力",d.scores.social]
     ];
     const colW=innerW/4;
+
     scoreItems.forEach(([label,val],i)=>{
       const cx=margin+colW*i+colW/2;
       if(i>0){
@@ -3624,14 +3669,17 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
         ctx.lineTo(margin+colW*i,y+152);
         ctx.stroke();
       }
+
       ctx.fillStyle=gold;
       ctx.font='700 48px Georgia,serif';
       ctx.textAlign="center";
       ctx.fillText(String(Math.round(val)),cx,y+84);
+
       ctx.fillStyle=muted;
       ctx.font='600 20px "Noto Sans TC","Microsoft JhengHei",sans-serif';
       ctx.fillText(label,cx,y+130);
     });
+
     ctx.textAlign="left";
     y+=228;
 
@@ -3640,17 +3688,16 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     ctx.font='700 18px Arial,sans-serif';
     ctx.fillText("OVERALL PATTERN",margin,y);
     y+=38;
+
     ctx.fillStyle=text;
     ctx.font='500 26px "Noto Sans TC","Microsoft JhengHei",sans-serif';
-    const patLines=wrapCanvasText(ctx,d.pattern,innerW);
-    for(const ln of patLines){
+    for(const ln of patM.lines){
       ctx.fillText(ln,margin,y);
       y+=41;
     }
     y+=54;
 
-
-    // Performance review / optimization advice
+    // Performance review
     ctx.fillStyle=goldSoft;
     ctx.font='700 18px Arial,sans-serif';
     ctx.fillText("PERFORMANCE REVIEW",margin,y);
@@ -3664,9 +3711,8 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
 
     ctx.fillStyle=muted;
     ctx.font='500 23px "Noto Sans TC","Microsoft JhengHei",sans-serif';
-    for(const advice of (d.optimizationAdvice||[])){
-      const ls=wrapCanvasText(ctx,"• "+advice,innerW);
-      for(const ln of ls){
+    for(const a of adviceMeasured){
+      for(const ln of a.lines){
         ctx.fillText(ln,margin,y);
         y+=36;
       }
@@ -3690,6 +3736,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     // Dialogue cards
     for(const row of measuredDialogue){
       const {item,isUser,lines,cardH}=row;
+
       canvasRoundRect(ctx,margin,y,innerW,cardH,14);
       ctx.fillStyle=isUser ? "rgba(208,167,79,.045)" : "#101214";
       ctx.fill();
@@ -3713,21 +3760,22 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       y+=cardH+22;
     }
 
-    // Footer
-    y=Math.min(y+34,H-54);
+    // Footer always goes after actual content, never pushed into a fixed bottom.
+    y+=34;
     ctx.fillStyle=dim;
     ctx.font='500 16px Arial,sans-serif';
     ctx.fillText("Generated by STRATEGY+ · AI Scenario Lab",margin,y);
+
     ctx.textAlign="right";
     ctx.fillText(new Date().toLocaleString("zh-TW"),W-margin,y);
     ctx.textAlign="left";
 
-    // Download JPEG
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",0.94));
     if(!blob){
       alert("JPG 產生失敗，請再試一次。");
       return;
     }
+
     const url=URL.createObjectURL(blob);
     const a=document.createElement("a");
     const safeCase=(d.caseName||"case").replace(/[\\/:*?"<>|]/g,"");
