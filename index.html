@@ -2715,22 +2715,22 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     qiqi:{
       name:"齊齊",
       code:"CASE 01",
-      theme:"COMMITMENT & CLARITY",
-      themeZh:"承諾與明確感",
-      tags:["關係定義","優先順序","未來規劃"],
-      introTitle:"她要的不是漂亮話，而是你到底怎麼定義「我們」。",
-      intro:"這次不再使用固定題庫。從第二回合開始，齊齊會直接根據你上一句真正說的內容往下追問。",
-      opening:"育哲，我想認真問一次。我們現在到底算什麼？你每次都說順其自然，可是一直要我猜，我會有點累。"
+      theme:"THIRD HEART PROTOCOL",
+      themeZh:"第三心動事件",
+      tags:["同性好感","第三人界線","承諾選擇"],
+      introTitle:"她很愛你，但她也發現自己對另一個女生心動了。",
+      intro:"齊齊選擇把這件事親口告訴你。真正要處理的不是她的性向，而是當愛與另一份好感同時存在，你們要怎麼面對。",
+      opening:"育哲，我有件事真的不知道該怎麼跟你說……我是真的很愛你，可是最近我發現，我好像也喜歡上一個女生了。不是普通朋友那種喜歡。"
     },
     mimi:{
       name:"小咪",
       code:"CASE 02",
-      theme:"TRUST & CLOSENESS",
-      themeZh:"安全感與親密界線",
-      tags:["主動程度","隱私","信任"],
-      introTitle:"她想確認的不是你有沒有秘密，而是她能不能放心靠近。",
-      intro:"這次不再使用固定題庫。從第二回合開始，小咪會直接抓住你上一句的內容，讓整段對話一路延續。",
-      opening:"育哲，有時候我覺得都是我先找你、先抱你、先說想你。你是不是其實沒有那麼需要我？"
+      theme:"ENRUI DISCOVERY",
+      themeZh:"恩瑞發現事件",
+      tags:["同性好感","隱瞞與誠實","選擇承擔"],
+      introTitle:"你很愛小咪，但她意外發現，你對恩瑞的感覺似乎不只是朋友。",
+      intro:"小咪知道你是雙性戀。她真正介意的不是恩瑞是男生，而是你已經對另一個人心動，卻沒有先讓她知道。",
+      opening:"育哲，我剛剛真的不是故意要看你的訊息，可是我看到恩瑞傳來的那幾句，再想到你最近跟他的互動……你老實跟我說，你是不是不只把恩瑞當朋友？"
     }
   };
 
@@ -3115,7 +3115,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     const spread=Math.max(...vals)-Math.min(...vals);
     const adjusted=avg-Math.max(0,spread-25)*0.12;
 
-    if(adjusted>=86)return["S","S RANK","接近前 3% 水準","五回合中幾乎都能同時顧到感受、界線、立場與現實判斷。"];
+    if(adjusted>=86)return["S","S RANK","接近前 3% 水準","五回合中幾乎都能同時顧到理解、界線、承擔與現實判斷。"];
     if(adjusted>=78)return["A","A RANK","接近前 10% 水準","整體成熟而穩定，只有少數情境出現明顯失衡。"];
     if(adjusted>=68)return["B","B RANK","接近前 25% 水準","多數時候能把對話往前推，但仍有固定模式會在壓力下出現。"];
     if(adjusted>=54)return["C","C RANK","最常見區間","有一些有效回應，但在高壓情境下容易回到慣性的溝通方式。"];
@@ -3168,9 +3168,9 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
           </div>
 
           <div class="ft-result-grid">
-            <div><b>${Math.round(scores.emotion)}</b><span>情緒價值</span></div>
+            <div><b>${Math.round(scores.emotion)}</b><span>理解力</span></div>
             <div><b>${Math.round(scores.boundary)}</b><span>界線感</span></div>
-            <div><b>${Math.round(scores.frame)}</b><span>主導力</span></div>
+            <div><b>${Math.round(scores.frame)}</b><span>承擔力</span></div>
             <div><b>${Math.round(scores.social)}</b><span>判斷力</span></div>
           </div>
 
@@ -3366,9 +3366,9 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     ctx.stroke();
 
     const scoreItems=[
-      ["情緒價值",d.scores.emotion],
+      ["理解力",d.scores.emotion],
       ["界線感",d.scores.boundary],
-      ["主導力",d.scores.frame],
+      ["承擔力",d.scores.frame],
       ["判斷力",d.scores.social]
     ];
     const colW=innerW/4;
