@@ -671,7 +671,7 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
 }
 .lab-cards{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:16px;
 }
 .lab-card{
@@ -757,11 +757,13 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
   font-weight:600;
 }
 .quiz-section,
-.sim-section{
+.sim-section,
+.forensics-section{
   display:none;
 }
 .quiz-section.is-open,
-.sim-section.is-open{
+.sim-section.is-open,
+.forensics-section.is-open{
   display:block;
 }
 .interactive-close-wrap{
@@ -786,6 +788,12 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
   color:var(--gold2);
   border-color:rgba(216,177,94,.28);
 }
+
+@media(max-width:1120px) and (min-width:841px){
+  .lab-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lab-card:last-child{grid-column:1 / -1}
+}
+
 @media(max-width:840px){
   .lab-head{grid-template-columns:1fr;gap:18px}
   .lab-head p{justify-self:start}
@@ -2267,6 +2275,337 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
 }
 </style>
 
+
+<style>
+.forensics-section{
+  padding:88px 0 100px;
+  background:
+    radial-gradient(circle at 84% 8%,rgba(216,177,94,.055),transparent 28%),
+    linear-gradient(180deg,#0b0c0e,#090a0c);
+  border-top:1px solid rgba(255,255,255,.05);
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.forensics-head{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:34px;
+  align-items:end;
+  margin-bottom:28px;
+}
+.forensics-head h2{
+  margin:12px 0 0;
+  font-family:Georgia,"Noto Serif TC",serif;
+  font-size:clamp(34px,4.5vw,58px);
+  line-height:1.05;
+  letter-spacing:-.035em;
+}
+.forensics-head h2 em{display:block;color:var(--gold2);font-style:normal}
+.forensics-head p{
+  margin:0;
+  color:#918b83;
+  font-size:12px;
+  line-height:1.85;
+}
+.forensics-app{
+  display:grid;
+  grid-template-columns:230px minmax(0,1fr);
+  min-height:720px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:24px;
+  overflow:hidden;
+  background:#0f1012;
+}
+.forensics-sidebar{
+  padding:26px 22px;
+  border-right:1px solid rgba(255,255,255,.07);
+  background:
+    linear-gradient(180deg,rgba(216,177,94,.035),transparent 42%),
+    #0d0e10;
+}
+.forensics-brand span{
+  display:block;
+  color:#d0a74f;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.18em;
+}
+.forensics-brand b{
+  display:block;
+  margin-top:8px;
+  color:#eee8df;
+  font-size:17px;
+}
+.forensics-brand small{
+  display:block;
+  margin-top:4px;
+  color:#6f6a63;
+  font-size:8px;
+  letter-spacing:.12em;
+}
+.forensics-status,.forensics-score{
+  margin-top:32px;
+  padding-top:18px;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+.forensics-status small,.forensics-score small{
+  color:#756f67;
+  font-size:8px;
+  letter-spacing:.16em;
+}
+.forensics-status b{
+  display:block;
+  margin-top:8px;
+  color:#c4b99f;
+  font:600 20px Georgia,serif;
+}
+.forensics-score strong{
+  display:block;
+  margin-top:8px;
+  color:#d0a74f;
+  font:700 46px Georgia,serif;
+}
+.forensics-sidebar-note{
+  margin-top:34px;
+  color:#77716a;
+  font-size:10px;
+  line-height:1.75;
+}
+.forensics-main{
+  min-width:0;
+  padding:34px;
+}
+.fx-topline{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:22px;
+}
+.fx-code{
+  color:#b8914c;
+  font-size:10px;
+  letter-spacing:.16em;
+}
+.fx-status{
+  color:#706b64;
+  font-size:9px;
+  letter-spacing:.12em;
+}
+.fx-title{
+  margin:0 0 8px;
+  color:#f0ebe2;
+  font-family:Georgia,"Noto Serif TC",serif;
+  font-size:30px;
+}
+.fx-brief{
+  margin:0 0 26px;
+  color:#8d877f;
+  font-size:11px;
+  line-height:1.75;
+}
+.fx-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1.08fr) minmax(300px,.92fr);
+  gap:20px;
+  align-items:start;
+}
+.fx-phone{
+  border:1px solid #282a28;
+  border-radius:18px;
+  overflow:hidden;
+  background:#0b0d0f;
+}
+.fx-phone-head{
+  padding:15px 18px;
+  border-bottom:1px solid #222421;
+  color:#8d877d;
+  font-size:9px;
+  letter-spacing:.12em;
+}
+.fx-chat{
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.fx-msg{
+  max-width:78%;
+  padding:11px 14px;
+  border-radius:14px;
+  font-size:13px;
+  line-height:1.65;
+}
+.fx-msg.her{
+  align-self:flex-start;
+  background:#17191b;
+  color:#d8d1c7;
+  border:1px solid #272927;
+}
+.fx-msg.him{
+  align-self:flex-end;
+  background:rgba(208,167,79,.075);
+  color:#eee7dc;
+  border:1px solid rgba(208,167,79,.18);
+}
+.fx-msg.danger{
+  box-shadow:inset 3px 0 0 #8c6540;
+}
+.fx-panel{
+  padding:20px;
+  border:1px solid #292824;
+  background:#111315;
+}
+.fx-panel small{
+  color:#b8914c;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.15em;
+}
+.fx-question{
+  margin:10px 0 16px;
+  color:#e9e2d8;
+  font-family:Georgia,"Noto Serif TC",serif;
+  font-size:20px;
+  line-height:1.5;
+}
+.fx-options{
+  display:grid;
+  gap:9px;
+}
+.fx-option{
+  width:100%;
+  text-align:left;
+  padding:12px 13px;
+  border:1px solid #2a2b28;
+  background:#0d0f11;
+  color:#aaa39a;
+  font-size:12px;
+  line-height:1.55;
+  cursor:pointer;
+  transition:.18s;
+}
+.fx-option:hover{
+  color:#e6ded2;
+  border-color:rgba(208,167,79,.35);
+}
+.fx-option.correct{
+  border-color:rgba(208,167,79,.65);
+  color:#e9d7ad;
+  background:rgba(208,167,79,.07);
+}
+.fx-option.wrong{
+  border-color:rgba(160,90,70,.45);
+  color:#b99d94;
+}
+.fx-report{
+  margin-top:16px;
+  padding:16px;
+  border:1px solid rgba(208,167,79,.22);
+  background:linear-gradient(180deg,rgba(208,167,79,.05),#0e1012);
+}
+.fx-report b{
+  display:block;
+  color:#d7c08e;
+  font-size:14px;
+  margin-bottom:8px;
+}
+.fx-report p{
+  margin:0;
+  color:#999188;
+  font-size:11px;
+  line-height:1.75;
+}
+.fx-repair{
+  margin-top:12px!important;
+  padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.06);
+  color:#c7b99b!important;
+}
+.fx-next{
+  margin-top:16px;
+  width:100%;
+}
+.fx-final{
+  display:grid;
+  place-items:center;
+  min-height:620px;
+  text-align:center;
+}
+.fx-final strong{
+  color:#d0a74f;
+  font:700 92px Georgia,serif;
+}
+.fx-final small{
+  display:block;
+  color:#756f67;
+  letter-spacing:.18em;
+  font-size:9px;
+}
+.fx-final h3{
+  margin:14px 0 10px;
+  font-family:Georgia,"Noto Serif TC",serif;
+  font-size:34px;
+}
+.fx-final p{
+  max-width:560px;
+  color:#918b83;
+  font-size:12px;
+  line-height:1.85;
+}
+@media(max-width:960px){
+  .forensics-app{grid-template-columns:1fr}
+  .forensics-sidebar{display:none}
+  .fx-layout{grid-template-columns:1fr}
+}
+@media(max-width:700px){
+  .forensics-section{padding:72px 0}
+  .forensics-head{grid-template-columns:1fr}
+  .forensics-main{padding:20px}
+  .fx-title{font-size:26px}
+}
+</style>
+
+
+<style>
+/* PLAY MODE — allow long previous answers / dual AI replies to grow naturally */
+.vn2-app.ft-play-mode{
+  height:auto!important;
+  min-height:820px!important;
+  overflow:visible!important;
+  align-items:stretch!important;
+}
+.vn2-app.ft-play-mode .vn2-side{
+  min-height:820px!important;
+  height:auto!important;
+}
+.vn2-app.ft-play-mode .vn2-game{
+  height:auto!important;
+  min-height:820px!important;
+  overflow:visible!important;
+}
+.vn2-app.ft-play-mode .ft-screen{
+  height:auto!important;
+  min-height:820px!important;
+  overflow:visible!important;
+  padding-bottom:42px!important;
+}
+.vn2-app.ft-play-mode .ft-conversation{
+  min-height:0!important;
+  overflow:visible!important;
+}
+.vn2-app.ft-play-mode .ft-answer{
+  margin-bottom:10px!important;
+}
+@media(max-width:980px){
+  .vn2-app.ft-play-mode,
+  .vn2-app.ft-play-mode .vn2-game,
+  .vn2-app.ft-play-mode .ft-screen{
+    min-height:860px!important;
+    height:auto!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <div aria-hidden="true" class="noise"></div>
@@ -2323,7 +2662,7 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
         <span class="eyebrow"><span></span> INTERACTIVE LAB</span>
         <h2>先別急著上課，<em>先看看你撐不撐得住。</em></h2>
       </div>
-      <p>兩套互動測試，平常保持收合。想玩的時候再展開，不會讓整個首頁一打開就被測驗塞滿。</p>
+      <p>三套互動測試，平常保持收合。想玩的時候再展開，不會讓整個首頁一打開就被測驗塞滿。</p>
     </div>
 
     <div class="lab-cards reveal delay-1">
@@ -2349,11 +2688,26 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
             <span class="lab-card-badge">HIGH STAKES</span>
           </div>
           <h3>情境模擬器</h3>
-          <p>扮演育哲進入兩組關係案例。人物情境、回應選擇、四項能力指標與 S–D 判定一次整合。</p>
+          <p>扮演育哲進入三組關係案例。人物情境、自由回應、四項能力指標與 S–D 判定一次整合。</p>
         </div>
         <div class="lab-card-bottom">
-          <span class="lab-card-meta">AI 即時對話・自由輸入・2 組案例・各 5 回合</span>
+          <span class="lab-card-meta">AI 即時對話・自由輸入・3 組案例・各 5 回合</span>
           <span class="lab-card-cta">進入模擬 →</span>
+        </div>
+      </div>
+
+      <div class="lab-card" data-open-interactive="forensics" role="button" tabindex="0">
+        <div>
+          <div class="lab-card-top">
+            <span class="lab-card-index">03・FORENSICS</span>
+            <span class="lab-card-badge">CASE FILES</span>
+          </div>
+          <h3>聊天紀錄鑑識室</h3>
+          <p>讀取事故現場聊天紀錄，找出第一個關係決策失誤。答錯不扣薪，但會留下鑑識紀錄。</p>
+        </div>
+        <div class="lab-card-bottom">
+          <span class="lab-card-meta">3 組案件・快速判讀・即時鑑識報告</span>
+          <span class="lab-card-cta">進入鑑識 →</span>
         </div>
       </div>
     </div>
@@ -2394,6 +2748,48 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
 </section>
 
 
+
+
+<section class="forensics-section" id="forensics">
+  <div class="section-shell">
+    <div class="interactive-close-wrap">
+      <button class="interactive-close" data-close-interactive>收起鑑識室 ↑</button>
+    </div>
+  </div>
+
+  <div class="section-shell">
+    <div class="forensics-head reveal">
+      <div>
+        <span class="eyebrow"><span></span> CHAT FORENSICS LAB</span>
+        <h2>事故已經發生，<em>現在找出是哪一句開始出事。</em></h2>
+      </div>
+      <p>這裡不考你會不會說漂亮話。你要從聊天紀錄裡定位第一個決策失誤，然後看 STRATEGY+ 鑑識中心怎麼判案。</p>
+    </div>
+
+    <div class="forensics-app reveal delay-1">
+      <aside class="forensics-sidebar">
+        <div class="forensics-brand">
+          <span>STRATEGY+</span>
+          <b>聊天紀錄鑑識室</b>
+          <small>CHAT FORENSICS DIVISION</small>
+        </div>
+        <div class="forensics-status">
+          <small>ACTIVE FILE</small>
+          <b id="fxCaseNum">01 / 03</b>
+        </div>
+        <div class="forensics-score">
+          <small>CASES SOLVED</small>
+          <strong id="fxScore">0</strong>
+        </div>
+        <div class="forensics-sidebar-note">
+          找出「第一個讓局勢開始不可逆轉的回覆」。
+        </div>
+      </aside>
+
+      <div class="forensics-main" id="forensicsApp"></div>
+    </div>
+  </div>
+</section>
 
 <section class="sim-section" id="simulator">
   <div class="section-shell"><div class="interactive-close-wrap"><button class="interactive-close" data-close-interactive>收起模擬器 ↑</button></div></div>
@@ -3038,7 +3434,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
   }[m]));
 
   function reset(route=null){
-    app.classList.remove("ft-result-mode");
+    app.classList.remove("ft-result-mode","ft-play-mode");
     state={
       screen:route?"intro":"select",
       route,
@@ -3074,7 +3470,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
   }
 
   function renderSelect(){
-    app.classList.remove("ft-result-mode");
+    app.classList.remove("ft-result-mode","ft-play-mode");
     game.innerHTML=`
       <div class="ft-select">
         <div class="ft-select-head">
@@ -3098,7 +3494,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
   }
 
   function renderIntro(){
-    app.classList.remove("ft-result-mode");
+    app.classList.remove("ft-result-mode","ft-play-mode");
     const s=ROUTES[state.route];
     game.innerHTML=`
       <div class="ft-screen">
@@ -3162,6 +3558,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
 
   function renderPlay(){
     app.classList.remove("ft-result-mode");
+    app.classList.add("ft-play-mode");
     const s=ROUTES[state.route];
 
     game.innerHTML=`
@@ -3565,6 +3962,7 @@ ${renderPromptBody()}
   }
 
   function renderEnd(){
+    app.classList.remove("ft-play-mode");
     app.classList.add("ft-result-mode");
     const s=ROUTES[state.route];
     const scores=finalScores();
@@ -4097,12 +4495,168 @@ ${renderPromptBody()}
 </script>
 
 
+
+<script>
+(function(){
+  const app=document.getElementById("forensicsApp");
+  if(!app)return;
+
+  const cases=[
+    {
+      code:"CASE FILE 019",
+      title:"「沒事」事故",
+      brief:"小咪明顯不爽，但育哲決定用最短路徑結束對話。",
+      chat:[
+        ["her","小咪：你去找她啊。"],
+        ["him","育哲：？"],
+        ["her","小咪：沒事。"],
+        ["him","育哲：又怎樣"],
+        ["her","小咪：真的沒事，你忙你的。"],
+        ["him","育哲：好"]
+      ],
+      q:"本案第一個讓局勢開始失控的回覆是哪一句？",
+      options:["育哲：？","育哲：又怎樣","育哲：好","小咪：沒事"],
+      correct:1,
+      report:"「又怎樣」把原本可以確認情緒的窗口，直接轉成防衛與責怪。後面的「好」只是補上最後一鏟土。",
+      repair:"較好的修復句：『我感覺妳其實有點不舒服。我先不猜，妳介意的是我剛剛哪個部分？』"
+    },
+    {
+      code:"CASE FILE 027",
+      title:"順其自然事故",
+      brief:"齊齊想確認關係，育哲試圖用模糊換取和平。",
+      chat:[
+        ["her","齊齊：所以我們現在到底算什麼？"],
+        ["him","育哲：就順其自然啊。"],
+        ["her","齊齊：可是我一直要猜會很累。"],
+        ["him","育哲：幹嘛一定要定義？開心就好。"],
+        ["her","齊齊：好，我知道了。"]
+      ],
+      q:"哪一句讓「不想貼標籤」正式變成「不願承擔」？",
+      options:["就順其自然啊","可是我一直要猜會很累","幹嘛一定要定義？開心就好","好，我知道了"],
+      correct:2,
+      report:"第一句還只是模糊，但第二次被指出問題後仍拒絕表態，才真正把『順其自然』變成逃避承擔。",
+      repair:"較好的修復句：『我不是不想承諾，是我一直沒有把我的立場講清楚。對我來說我們是在認真交往。』"
+    },
+    {
+      code:"CASE FILE 041",
+      title:"已讀三小時事故",
+      brief:"育哲忙到沒回訊息，回來後選擇先證明自己沒有錯。",
+      chat:[
+        ["her","小咪：你今天是不是很忙？"],
+        ["him","育哲：剛在忙工作。"],
+        ["her","小咪：嗯，忙到三個小時都不能回一下喔。"],
+        ["him","育哲：我真的在忙啊，妳不要每次都這樣。"],
+        ["her","小咪：算了，當我沒問。"]
+      ],
+      q:"真正的高風險句是哪一句？",
+      options:["剛在忙工作","忙到三個小時都不能回一下喔","我真的在忙啊，妳不要每次都這樣","算了，當我沒問"],
+      correct:2,
+      report:"這句先處理『誰有理』，卻沒有處理對方在意的『我是不是完全不在你的注意範圍裡』，還順便把一次事件升級成『妳每次都這樣』。",
+      repair:"較好的修復句：『今天真的卡住了，但我知道完全沒交代會讓妳不舒服。下次忙到不能聊，我至少先跟妳說一聲。』"
+    }
+  ];
+
+  let idx=0,score=0,locked=false;
+
+  const caseNum=document.getElementById("fxCaseNum");
+  const scoreEl=document.getElementById("fxScore");
+
+  function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+
+  function render(){
+    if(idx>=cases.length){
+      caseNum.textContent="COMPLETE";
+      scoreEl.textContent=score;
+      app.innerHTML=`
+        <div class="fx-final">
+          <div>
+            <small>FORENSICS COMPLETE</small>
+            <strong>${score}/${cases.length}</strong>
+            <h3>${score===3?"首席關係鑑識官":score===2?"高風險句辨識合格":score===1?"仍需現場實習":"建議先不要碰手機"}</h3>
+            <p>${score===3
+              ?"你能快速定位真正讓局勢惡化的回覆，不容易被表面那句「沒事」騙過。"
+              :score===2
+              ?"大部分事故點抓得到，但在高壓對話裡仍可能把『最後爆炸』誤認成『最早失誤』。"
+              :"你目前比較容易看到結果，卻忽略前面那句已經改變對話方向的關鍵回覆。"}</p>
+            <button class="vn2-primary" id="fxRestart">重新鑑識 →</button>
+          </div>
+        </div>`;
+      document.getElementById("fxRestart").onclick=()=>{idx=0;score=0;locked=false;scoreEl.textContent="0";render();};
+      return;
+    }
+
+    const c=cases[idx];
+    caseNum.textContent=String(idx+1).padStart(2,"0")+" / "+String(cases.length).padStart(2,"0");
+    scoreEl.textContent=score;
+    locked=false;
+
+    app.innerHTML=`
+      <div class="fx-topline">
+        <span class="fx-code">${c.code}</span>
+        <span class="fx-status">EVIDENCE STATUS・VERIFIED</span>
+      </div>
+      <h3 class="fx-title">${c.title}</h3>
+      <p class="fx-brief">${c.brief}</p>
+
+      <div class="fx-layout">
+        <div class="fx-phone">
+          <div class="fx-phone-head">CHAT LOG・事故現場原始紀錄</div>
+          <div class="fx-chat">
+            ${c.chat.map((m,i)=>`<div class="fx-msg ${m[0]} ${i===3&&idx!==1?"":""}">${esc(m[1])}</div>`).join("")}
+          </div>
+        </div>
+
+        <div class="fx-panel">
+          <small>FORENSIC QUESTION</small>
+          <div class="fx-question">${c.q}</div>
+          <div class="fx-options">
+            ${c.options.map((o,i)=>`<button class="fx-option" data-fx-answer="${i}">${String.fromCharCode(65+i)}・${esc(o)}</button>`).join("")}
+          </div>
+          <div id="fxReport"></div>
+        </div>
+      </div>`;
+  }
+
+  app.addEventListener("click",e=>{
+    const btn=e.target.closest("[data-fx-answer]");
+    if(!btn||locked)return;
+    locked=true;
+    const chosen=Number(btn.dataset.fxAnswer);
+    const c=cases[idx];
+    const all=[...app.querySelectorAll("[data-fx-answer]")];
+
+    all.forEach((b,i)=>{
+      if(i===c.correct)b.classList.add("correct");
+      else if(i===chosen)b.classList.add("wrong");
+      b.disabled=true;
+    });
+
+    if(chosen===c.correct)score++;
+    scoreEl.textContent=score;
+
+    const report=document.getElementById("fxReport");
+    report.innerHTML=`
+      <div class="fx-report">
+        <b>${chosen===c.correct?"鑑識成立・定位正確":"鑑識偏差・真正事故點在別處"}</b>
+        <p>${c.report}</p>
+        <p class="fx-repair">${c.repair}</p>
+        <button class="vn2-primary fx-next" id="fxNext">${idx===cases.length-1?"查看鑑識結果 →":"下一案 →"}</button>
+      </div>`;
+
+    document.getElementById("fxNext").onclick=()=>{idx++;render();};
+  });
+
+  render();
+})();
+</script>
+
 <script>
 (function(){
   const hub = document.getElementById("interactive-lab");
   const quiz = document.getElementById("quiz");
   const simulator = document.getElementById("simulator");
-  const map = {quiz, simulator};
+  const forensics = document.getElementById("forensics");
+  const map = {quiz, simulator, forensics};
 
   function openPanel(key){
     Object.values(map).forEach(el => {
