@@ -2219,6 +2219,54 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
 }
 </style>
 
+
+<style>
+.ft-dual-prompt{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.ft-dual-line{
+  min-width:0;
+  padding:18px 20px 20px;
+  border:1px solid #292824;
+  background:#101214;
+}
+.ft-dual-line.qiqi{border-color:rgba(208,167,79,.34)}
+.ft-dual-line.mimi{border-color:rgba(208,167,79,.18);background:#121315}
+.ft-dual-line>span{
+  display:block;
+  margin-bottom:9px;
+  color:#b8914c;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.13em;
+}
+.ft-dual-line>p{
+  margin:0;
+  color:#eee7dc;
+  font-family:"Noto Serif TC","Microsoft JhengHei",serif;
+  font-size:18px;
+  line-height:1.7;
+}
+.ft-final-dual{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-top:10px;
+}
+.ft-final-dual>div{
+  padding:14px 16px;
+  border:1px solid #2a2926;
+  background:#101214;
+}
+.ft-final-dual b{color:#b8914c;font-size:12px}
+.ft-final-dual p{margin:8px 0 0!important}
+@media(max-width:760px){
+  .ft-dual-prompt,.ft-final-dual{grid-template-columns:1fr}
+}
+</style>
+
 </head>
 <body>
 <div aria-hidden="true" class="noise"></div>
@@ -2962,7 +3010,11 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       tags:["三人修羅場","公平分配","成人關係"],
       introTitle:"兩個人都想先得到你，而且誰都不想先退。",
       intro:"齊齊、小咪和育哲三個成年人一起出遊，彼此都知道這趟旅行帶有親密關係的可能。抵達住宿地點後，齊齊和小咪開始爭論今晚到底誰可以先和育哲發生關係。你的任務不是隨便選一個，而是做出讓兩邊都能理解的公平決策。",
-      opening:"我們三個才剛到住宿的地方，齊齊跟小咪就直接吵起來了。齊齊說她想今晚先跟你發生關係，小咪也不肯讓，還說這趟一路都是她在退。現在兩個人都看著你，要你自己決定——育哲，今晚到底誰先？"
+      opening:"我們三個才剛到住宿的地方，齊齊跟小咪就直接吵起來了。齊齊說她想今晚先跟你發生關係，小咪也不肯讓，還說這趟一路都是她在退。現在兩個人都看著你，要你自己決定——育哲，今晚到底誰先？",
+      openingReplies:[
+        {speaker:"齊齊",text:"我先說喔，這趟本來就是我先約育哲的。今晚如果要有人先跟他單獨相處，我覺得應該是我。"},
+        {speaker:"小咪",text:"可是這一路我已經讓很多次了欸，為什麼又要我排後面？育哲，你自己說，今晚到底怎麼分？"}
+      ]
     }
   };
 
@@ -2971,12 +3023,14 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     route:null,
     turn:0,
     currentPrompt:"",
+    currentReplies:[],
     history:[],
     analyses:[],
     loading:false,
     loadingText:"",
     error:"",
-    finalReply:""
+    finalReply:"",
+    finalReplies:[]
   };
 
   const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({
@@ -2990,12 +3044,14 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       route,
       turn:0,
       currentPrompt:route?ROUTES[route].opening:"",
+      currentReplies:route==="triple"?[...(ROUTES[route].openingReplies||[])]:[],
       history:[],
       analyses:[],
       loading:false,
       loadingText:"",
       error:"",
-      finalReply:""
+      finalReply:"",
+      finalReplies:[]
     };
     updateMeters(false);
     render();
@@ -3076,6 +3132,34 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     return "";
   }
 
+  function renderPromptBody(){
+    if(state.loading){
+      const label=state.route==="triple"?"齊齊與小咪正在各自回覆…":(ROUTES[state.route].name+"正在回覆…");
+      return `<div class="ft-prompt is-loading">
+        <span>${state.route==="triple"?"齊齊 × 小咪":ROUTES[state.route].name}</span>
+        <p><span class="ft-thinking"><i></i><i></i><i></i>${esc(state.loadingText||label)}</span></p>
+      </div>`;
+    }
+
+    if(state.route==="triple"){
+      const replies=(state.currentReplies||[]).length
+        ? state.currentReplies
+        : (ROUTES.triple.openingReplies||[]);
+      return `<div class="ft-dual-prompt">
+        ${replies.map(r=>`
+          <div class="ft-dual-line ${r.speaker==="齊齊"?"qiqi":"mimi"}">
+            <span>${esc(r.speaker)}</span>
+            <p>${esc(r.text)}</p>
+          </div>`).join("")}
+      </div>`;
+    }
+
+    return `<div class="ft-prompt">
+      <span>${esc(ROUTES[state.route].name)}</span>
+      <p>${esc(state.currentPrompt)}</p>
+    </div>`;
+  }
+
   function renderPlay(){
     app.classList.remove("ft-result-mode");
     const s=ROUTES[state.route];
@@ -3107,13 +3191,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
               <p>${esc(latestUserAnswer())}</p>
             </div>`:""}
 
-          <div class="ft-prompt ${state.loading?"is-loading":""}">
-            <span>${s.name}</span>
-            <p>${state.loading
-              ? `<span class="ft-thinking"><i></i><i></i><i></i>${esc(state.loadingText || (s.name+"正在回覆…"))}</span>`
-              : esc(state.currentPrompt)
-            }</p>
-          </div>
+${renderPromptBody()}
 
           ${state.error?`
             <div class="ft-api-error">
@@ -3159,9 +3237,15 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     const s=ROUTES[state.route];
     const msgs=[];
 
-    // Include the current female prompt as context.
+    // Include the current prompt(s) as context.
     state.history.forEach(m=>msgs.push({speaker:m.speaker,text:m.text}));
-    if(state.currentPrompt){
+
+    if(state.route==="triple"){
+      (state.currentReplies||[]).forEach(r=>{
+        const exists=msgs.some(m=>m.speaker===r.speaker && m.text===r.text);
+        if(!exists) msgs.push({speaker:r.speaker,text:r.text});
+      });
+    }else if(state.currentPrompt){
       const last=msgs[msgs.length-1];
       if(!last || last.speaker!==s.name || last.text!==state.currentPrompt){
         msgs.push({speaker:s.name,text:state.currentPrompt});
@@ -3196,7 +3280,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       state.loadingText=`${ROUTES[state.route].name}正在整理想法… ${waitSec} 秒後自動重試`;
       render();
       await new Promise(resolve=>setTimeout(resolve,waitSec*1000));
-      state.loadingText=`${ROUTES[state.route].name}正在重新回覆…`;
+      state.loadingText=state.route==="triple"?"齊齊與小咪正在重新回覆…":`${ROUTES[state.route].name}正在重新回覆…`;
       render();
       return callAI(userAnswer,1);
     }
@@ -3208,10 +3292,54 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       throw new Error("AI 現在有點忙，請稍後再試。");
     }
 
-    if(!data?.reply){
+    if(state.route==="triple"){
+      if(!Array.isArray(data?.replies) || data.replies.length!==2){
+        throw new Error("AI 現在有點忙，請稍後再試。");
+      }
+    }else if(!data?.reply){
       throw new Error("AI 現在有點忙，請稍後再試。");
     }
     return data;
+  }
+
+  function storeCurrentPromptInHistory(){
+    if(state.route==="triple"){
+      (state.currentReplies||[]).forEach(r=>{
+        const last=state.history[state.history.length-1];
+        if(!last || last.speaker!==r.speaker || last.text!==r.text){
+          state.history.push({speaker:r.speaker,text:r.text});
+        }
+      });
+      return;
+    }
+
+    const s=ROUTES[state.route];
+    const lastHist=state.history[state.history.length-1];
+    if(!lastHist || lastHist.speaker!==s.name || lastHist.text!==state.currentPrompt){
+      state.history.push({speaker:s.name,text:state.currentPrompt});
+    }
+  }
+
+  function applyAiReply(data, isFinal=false){
+    if(state.route==="triple"){
+      const replies=(data.replies||[]).map(r=>({speaker:String(r.speaker),text:String(r.text)}));
+      state.currentReplies=replies;
+      state.currentPrompt=replies.map(r=>`${r.speaker}：${r.text}`).join("\n");
+      if(isFinal){
+        state.finalReplies=replies;
+        state.finalReply=state.currentPrompt;
+        replies.forEach(r=>state.history.push(r));
+      }
+      return;
+    }
+
+    state.currentReplies=[];
+    state.currentPrompt=data.reply;
+    if(isFinal){
+      state.finalReplies=[];
+      state.finalReply=data.reply;
+      state.history.push({speaker:data.speaker||ROUTES[state.route].name,text:data.reply});
+    }
   }
 
   async function submitText(){
@@ -3229,15 +3357,12 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
 
     const s=ROUTES[state.route];
 
-    // Store the female prompt and user's answer in the visible case log.
-    const lastHist=state.history[state.history.length-1];
-    if(!lastHist || lastHist.speaker!==s.name || lastHist.text!==state.currentPrompt){
-      state.history.push({speaker:s.name,text:state.currentPrompt});
-    }
+    // Store the current prompt(s) and user's answer in the visible case log.
+    storeCurrentPromptInHistory();
     state.history.push({speaker:"育哲",text});
 
     state.loading=true;
-    state.loadingText=`${s.name}正在回覆…`;
+    state.loadingText=state.route==="triple"?"齊齊與小咪正在各自回覆…":`${s.name}正在回覆…`;
     state.error="";
     render();
 
@@ -3255,8 +3380,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       });
 
       if(state.turn>=4){
-        state.finalReply=data.reply;
-        state.history.push({speaker:data.speaker||s.name,text:data.reply});
+        applyAiReply(data,true);
         state.loading=false;
         state.loadingText="";
         state.screen="end";
@@ -3264,7 +3388,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
         return;
       }
 
-      state.currentPrompt=data.reply;
+      applyAiReply(data,false);
       state.turn++;
       state.loading=false;
       state.loadingText="";
@@ -3311,8 +3435,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       });
 
       if(state.turn>=4){
-        state.finalReply=data.reply;
-        state.history.push({speaker:ROUTES[state.route].name,text:data.reply});
+        applyAiReply(data,true);
         state.loading=false;
         state.loadingText="";
         state.screen="end";
@@ -3320,7 +3443,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
         return;
       }
 
-      state.currentPrompt=data.reply;
+      applyAiReply(data,false);
       state.turn++;
       state.loading=false;
       state.loadingText="";
@@ -3463,7 +3586,11 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
 
           <div class="ft-final-reply">
             <small>LAST RESPONSE・${s.name}</small>
-            <p>${esc(state.finalReply)}</p>
+            ${state.route==="triple" && state.finalReplies.length
+              ? `<div class="ft-final-dual">${state.finalReplies.map(r=>`
+                  <div><b>${esc(r.speaker)}</b><p>${esc(r.text)}</p></div>
+                `).join("")}</div>`
+              : `<p>${esc(state.finalReply)}</p>`}
           </div>
 
           <h3>${s.name} AI 情境模擬完成</h3>
@@ -3932,6 +4059,7 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
     if(action==="choose"){
       state.route=el.dataset.route;
       state.currentPrompt=ROUTES[state.route].opening;
+      state.currentReplies=state.route==="triple"?[...(ROUTES.triple.openingReplies||[])]:[];
       state.screen="intro";
       render();
     }else if(action==="home"){
@@ -3940,9 +4068,11 @@ document.getElementById("resultGoCourse").onclick=()=>{const el=document.querySe
       state.screen="play";
       state.turn=0;
       state.currentPrompt=ROUTES[state.route].opening;
+      state.currentReplies=state.route==="triple"?[...(ROUTES.triple.openingReplies||[])]:[];
       state.history=[];
       state.analyses=[];
       state.finalReply="";
+      state.finalReplies=[];
       updateMeters(false);
       render();
     }else if(action==="submit"){
