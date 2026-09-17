@@ -2606,6 +2606,266 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
 }
 </style>
 
+
+<style>
+/* ADVANCED FORENSICS */
+.fx-advanced-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);
+  gap:20px;
+  align-items:start;
+}
+.fx-investigation{
+  position:sticky;
+  top:20px;
+  padding:22px;
+  border:1px solid #292824;
+  background:#111315;
+}
+.fx-investigation>small{
+  color:#b8914c;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.16em;
+}
+.fx-investigation h4{
+  margin:8px 0 6px;
+  color:#eee7dc;
+  font-family:Georgia,"Noto Serif TC",serif;
+  font-size:25px;
+}
+.fx-investigation>p{
+  margin:0 0 14px;
+  color:#8f8980;
+  font-size:11px;
+}
+.fx-evidence-chat{
+  gap:8px!important;
+}
+.fx-evidence-msg{
+  position:relative;
+  width:100%;
+  display:grid;
+  grid-template-columns:54px 94px minmax(0,1fr) 52px;
+  gap:10px;
+  align-items:start;
+  padding:12px 13px;
+  border:1px solid #242623;
+  background:#111315;
+  color:#c8c0b5;
+  text-align:left;
+  cursor:pointer;
+  transition:.16s ease;
+}
+.fx-evidence-msg.party-b{
+  background:rgba(208,167,79,.035);
+}
+.fx-evidence-msg:hover{
+  border-color:rgba(208,167,79,.35);
+  transform:translateX(2px);
+}
+.fx-evidence-msg.selected{
+  border-color:rgba(208,167,79,.72);
+  background:rgba(208,167,79,.075);
+}
+.fx-evidence-index{
+  color:#6f695f;
+  font:700 10px Arial,sans-serif;
+  letter-spacing:.08em;
+  padding-top:3px;
+}
+.fx-evidence-meta{
+  color:#817a70;
+  font-size:10px;
+  line-height:1.55;
+}
+.fx-evidence-text{
+  color:#d9d1c7;
+  font-size:13px;
+  line-height:1.7;
+}
+.fx-evidence-order{
+  min-height:18px;
+  color:#d0a74f;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-align:right;
+}
+.fx-evidence-msg.answer-ignition{
+  box-shadow:inset 4px 0 0 #d0a74f;
+}
+.fx-evidence-msg.answer-amplifier{
+  box-shadow:inset 4px 0 0 #98763e;
+}
+.fx-evidence-msg.false-lead{
+  outline:1px dashed rgba(150,150,150,.25);
+  outline-offset:-5px;
+}
+.fx-slots{
+  display:grid;
+  gap:8px;
+  margin:16px 0;
+}
+.fx-slot{
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr);
+  gap:10px;
+  align-items:center;
+  min-height:66px;
+  padding:11px;
+  border:1px dashed #34342f;
+  background:#0d0f11;
+}
+.fx-slot>span{
+  color:#716a61;
+  font:700 18px Georgia,serif;
+}
+.fx-slot b{
+  display:block;
+  color:#cfc7bc;
+  font-size:12px;
+  margin-bottom:4px;
+}
+.fx-slot small{
+  display:block;
+  color:#716c65;
+  font-size:9px;
+  line-height:1.55;
+}
+.fx-slot.filled{
+  border-style:solid;
+  border-color:rgba(208,167,79,.38);
+}
+.fx-slot.filled>span{
+  color:#d0a74f;
+}
+.fx-investigation-note{
+  margin:14px 0;
+  padding:11px 12px;
+  border-left:2px solid rgba(208,167,79,.45);
+  background:rgba(208,167,79,.025);
+  color:#867f75;
+  font-size:10px;
+  line-height:1.7;
+}
+.fx-submit-evidence{
+  width:100%;
+}
+.fx-submit-evidence:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+}
+.fx-clear{
+  width:100%;
+  margin-top:8px;
+  padding:10px;
+  border:0;
+  background:transparent;
+  color:#6e6962;
+  font-size:10px;
+  cursor:pointer;
+}
+.fx-clear:not(:disabled):hover{color:#a99f92}
+.fx-clear:disabled{opacity:.35;cursor:not-allowed}
+.fx-advanced-report{
+  margin-top:18px!important;
+}
+.fx-advanced-report>b{
+  color:#d7c08e!important;
+}
+.fx-chain{
+  margin-top:14px;
+  padding-top:13px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.fx-chain>small{
+  color:#806b43;
+  font-size:8px;
+  letter-spacing:.14em;
+}
+.fx-chain>div{
+  display:grid;
+  grid-template-columns:30px 1fr;
+  gap:9px;
+  margin-top:9px;
+}
+.fx-chain>div>span{
+  color:#735f39;
+  font:700 10px Arial,sans-serif;
+  padding-top:3px;
+}
+.fx-chain>div>p{
+  margin:0!important;
+  color:#8e877e!important;
+  font-size:10px!important;
+  line-height:1.65!important;
+}
+.fx-legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 12px;
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.fx-legend span{
+  color:#7e776e;
+  font-size:9px;
+}
+.fx-legend i{
+  display:inline-block;
+  width:7px;height:7px;
+  margin-right:5px;
+}
+.fx-legend .ig{background:#d0a74f}
+.fx-legend .am{background:#98763e}
+.fx-legend .fl{border:1px dashed #777}
+.fx-repair b{
+  display:inline!important;
+  color:#c5af80!important;
+  font-size:inherit!important;
+}
+@media(max-width:980px){
+  .fx-advanced-layout{grid-template-columns:1fr}
+  .fx-investigation{position:static}
+}
+@media(max-width:640px){
+  .fx-evidence-msg{
+    grid-template-columns:42px minmax(0,1fr) 42px;
+  }
+  .fx-evidence-meta{
+    grid-column:2;
+    grid-row:1;
+  }
+  .fx-evidence-text{
+    grid-column:1 / -1;
+    grid-row:2;
+  }
+  .fx-evidence-order{
+    grid-column:3;
+    grid-row:1;
+  }
+}
+</style>
+
+
+<style>
+.fx-participants{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:10px;
+  padding:5px 8px;
+  border:1px solid rgba(208,167,79,.20);
+  background:rgba(208,167,79,.025);
+  color:#9b865d;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.11em;
+}
+</style>
+
 </head>
 <body>
 <div aria-hidden="true" class="noise"></div>
@@ -2703,10 +2963,10 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
             <span class="lab-card-badge">CASE FILES</span>
           </div>
           <h3>聊天紀錄鑑識室</h3>
-          <p>讀取事故現場聊天紀錄，找出第一個關係決策失誤。答錯不扣薪，但會留下鑑識紀錄。</p>
+          <p>讀取育哲與齊齊／小咪的事故現場，從聊天紀錄中鎖定「起爆點」與「放大點」。不是選一句最難聽的，而是重建事故是怎麼一步步發生的。</p>
         </div>
         <div class="lab-card-bottom">
-          <span class="lab-card-meta">3 組案件・快速判讀・即時鑑識報告</span>
+          <span class="lab-card-meta">5 組案件・雙證據定位・事故鏈重建</span>
           <span class="lab-card-cta">進入鑑識 →</span>
         </div>
       </div>
@@ -2761,9 +3021,9 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
     <div class="forensics-head reveal">
       <div>
         <span class="eyebrow"><span></span> CHAT FORENSICS LAB</span>
-        <h2>事故已經發生，<em>現在找出是哪一句開始出事。</em></h2>
+        <h2>事故已經發生，<em>現在重建它是怎麼壞掉的。</em></h2>
       </div>
-      <p>這裡不考你會不會說漂亮話。你要從聊天紀錄裡定位第一個決策失誤，然後看 STRATEGY+ 鑑識中心怎麼判案。</p>
+      <p>這裡不考你怎麼回，也沒有 A/B/C/D。每案會還原育哲與齊齊或小咪的一段事故對話，你要直接標記兩個證據：第一個改變對話方向的「起爆點」，以及後續讓局勢失控的「放大點」。</p>
     </div>
 
     <div class="forensics-app reveal delay-1">
@@ -2782,7 +3042,7 @@ linear-gradient(180deg,#101011,#0c0c0d);border-top:1px solid var(--line);border-
           <strong id="fxScore">0</strong>
         </div>
         <div class="forensics-sidebar-note">
-          找出「第一個讓局勢開始不可逆轉的回覆」。
+          每案選 2 則證據：① 起爆點　② 放大點。角色會是育哲 × 齊齊／小咪。
         </div>
       </aside>
 
@@ -4504,146 +4764,361 @@ ${renderPromptBody()}
   const cases=[
     {
       code:"CASE FILE 019",
-      title:"「沒事」事故",
-      brief:"小咪明顯不爽，但育哲決定用最短路徑結束對話。",
+      personA:"小咪",
+      personB:"育哲",
+      title:"已讀之後的十二分鐘",
+      brief:"表面看起來是最後一句太冷淡，但真正的事故早在前面就開始了。",
       chat:[
-        ["her","小咪：你去找她啊。"],
-        ["him","育哲：？"],
-        ["her","小咪：沒事。"],
-        ["him","育哲：又怎樣"],
-        ["her","小咪：真的沒事，你忙你的。"],
-        ["him","育哲：好"]
+        ["20:41","A","今天下班可以來找我嗎？我今天有點低落。"],
+        ["20:43","B","今天可能不行，晚點要跟同事吃飯。"],
+        ["20:44","A","喔好，沒關係。"],
+        ["20:47","B","妳不要又想太多，我真的只是吃飯。"],
+        ["20:51","A","我沒有說你不能去啊。"],
+        ["20:55","B","可是妳那個『喔好』每次就是有事。"],
+        ["20:58","A","所以我現在連說沒關係都不行？"],
+        ["21:02","B","好啦，不然我要怎樣。"]
       ],
-      q:"本案第一個讓局勢開始失控的回覆是哪一句？",
-      options:["育哲：？","育哲：又怎樣","育哲：好","小咪：沒事"],
-      correct:1,
-      report:"「又怎樣」把原本可以確認情緒的窗口，直接轉成防衛與責怪。後面的「好」只是補上最後一鏟土。",
-      repair:"較好的修復句：『我感覺妳其實有點不舒服。我先不猜，妳介意的是我剛剛哪個部分？』"
+      ignition:3,
+      amplifier:5,
+      falseLead:7,
+      chain:[
+        "A 原本只是表達低落與希望被陪伴。",
+        "B 在沒被指控的情況下先說「不要又想太多」，把需求重新定義成猜疑。",
+        "A 否認限制後，B 又用「每次就是有事」擴大成性格／慣性指控。",
+        "最後一句雖然最冷，但已經是前兩次錯誤後的結果。"
+      ],
+      report:"真正的起爆點不是拒絕見面，而是 B 主動把 A 的失落解讀成『妳又在多想』。放大點則是把一次對話升級成『妳每次都這樣』。",
+      repair:"最佳修復窗口其實在 20:47：『我今天真的去不了，但我有聽到妳今天狀態不好。吃完我打給妳，可以嗎？』"
     },
     {
       code:"CASE FILE 027",
-      title:"順其自然事故",
-      brief:"齊齊想確認關係，育哲試圖用模糊換取和平。",
+      personA:"齊齊",
+      personB:"育哲",
+      title:"生日聚餐取消案",
+      brief:"每一句單看都合理，但其中兩句讓「行程變更」變成「優先順序審判」。",
       chat:[
-        ["her","齊齊：所以我們現在到底算什麼？"],
-        ["him","育哲：就順其自然啊。"],
-        ["her","齊齊：可是我一直要猜會很累。"],
-        ["him","育哲：幹嘛一定要定義？開心就好。"],
-        ["her","齊齊：好，我知道了。"]
+        ["16:10","A","我主管剛說晚上臨時要留一下，可能會晚一小時。"],
+        ["16:11","B","今天不是我生日嗎？"],
+        ["16:12","A","我知道，我也是剛剛才知道。"],
+        ["16:13","B","所以工作永遠都比我重要就對了。"],
+        ["16:15","A","妳一定要現在這樣講嗎？我也很煩。"],
+        ["16:17","B","我只是想知道你到底有沒有把今天放在心上。"],
+        ["16:20","A","我要是不在乎就不會訂餐廳了。"],
+        ["16:22","B","算了。"]
       ],
-      q:"哪一句讓「不想貼標籤」正式變成「不願承擔」？",
-      options:["就順其自然啊","可是我一直要猜會很累","幹嘛一定要定義？開心就好","好，我知道了"],
-      correct:2,
-      report:"第一句還只是模糊，但第二次被指出問題後仍拒絕表態，才真正把『順其自然』變成逃避承擔。",
-      repair:"較好的修復句：『我不是不想承諾，是我一直沒有把我的立場講清楚。對我來說我們是在認真交往。』"
+      ignition:3,
+      amplifier:4,
+      falseLead:7,
+      chain:[
+        "臨時加班本身是事件，不等於關係判斷。",
+        "「永遠都比我重要」把單次意外直接推論成長期價值排序。",
+        "A 沒有拆解這個推論，而是用「妳一定要這樣講嗎」反擊對方的表達方式。",
+        "後面雙方開始各自證明自己才是被誤解的人。"
+      ],
+      report:"起爆點是把一次突發加班上升成『永遠都比我重要』；放大點是 A 開始審判 B 的表達方式，而不是回到今晚怎麼補救。",
+      repair:"16:15 若改成：『我知道今天特別，所以妳會失望很合理。我先確認最晚幾點能走，再決定餐廳怎麼調。』事故有很高機率停止。"
+    },
+    {
+      code:"CASE FILE 034",
+      personA:"小咪",
+      personB:"育哲",
+      title:"前任按讚事件",
+      brief:"沒有任何人真的越界，但對話最後仍然爆炸。請找出責任轉移發生在哪裡。",
+      chat:[
+        ["23:04","A","你前任剛剛又按你限動欸。"],
+        ["23:05","B","她按她的啊，我又沒回。"],
+        ["23:06","A","我知道，我只是看到會有點在意。"],
+        ["23:08","B","那我能怎麼辦？總不能控制她吧。"],
+        ["23:10","A","我也沒叫你控制她。"],
+        ["23:11","B","可是妳一直提，不就是要我處理嗎？"],
+        ["23:14","A","我只是希望你知道我會不舒服。"],
+        ["23:16","B","那是妳要自己調整吧。"]
+      ],
+      ignition:3,
+      amplifier:5,
+      falseLead:7,
+      chain:[
+        "A 明確說的是『我會在意』，並未要求 B 控制前任。",
+        "B 用『我能怎麼辦』把情緒告知改寫成任務要求。",
+        "A 澄清後，B 又堅持『妳一直提就是要我處理』，完成責任轉移。",
+        "最後一句只是把已經形成的錯誤框架講到底。"
+      ],
+      report:"這案難點在於最後一句最刺耳，但真正的起爆點是 B 把『分享不舒服』錯譯成『要求你控制第三人』，放大點則是 A 澄清後仍拒絕修正理解。",
+      repair:"23:08 可以改成：『我知道妳不是叫我控制她。妳是在告訴我這件事會讓妳不舒服，對嗎？』"
     },
     {
       code:"CASE FILE 041",
-      title:"已讀三小時事故",
-      brief:"育哲忙到沒回訊息，回來後選擇先證明自己沒有錯。",
+      personA:"齊齊",
+      personB:"育哲",
+      title:"群組玩笑事故",
+      brief:"真正的問題不是玩笑本身，而是私下修復失敗。",
       chat:[
-        ["her","小咪：你今天是不是很忙？"],
-        ["him","育哲：剛在忙工作。"],
-        ["her","小咪：嗯，忙到三個小時都不能回一下喔。"],
-        ["him","育哲：我真的在忙啊，妳不要每次都這樣。"],
-        ["her","小咪：算了，當我沒問。"]
+        ["19:32","A","你剛剛在群組講我那個真的有點過頭。"],
+        ["19:34","B","蛤？大家都知道我在開玩笑吧。"],
+        ["19:35","A","我知道是玩笑，但我當下其實滿尷尬的。"],
+        ["19:37","B","妳平常不是也會嘴我？"],
+        ["19:39","A","可以嘴啊，但那件事我不想被拿來講。"],
+        ["19:41","B","好啦好啦，以後都不能開妳玩笑就對了。"],
+        ["19:43","A","我沒有這樣說。"],
+        ["19:45","B","不然妳到底想怎樣？"]
       ],
-      q:"真正的高風險句是哪一句？",
-      options:["剛在忙工作","忙到三個小時都不能回一下喔","我真的在忙啊，妳不要每次都這樣","算了，當我沒問"],
-      correct:2,
-      report:"這句先處理『誰有理』，卻沒有處理對方在意的『我是不是完全不在你的注意範圍裡』，還順便把一次事件升級成『妳每次都這樣』。",
-      repair:"較好的修復句：『今天真的卡住了，但我知道完全沒交代會讓妳不舒服。下次忙到不能聊，我至少先跟妳說一聲。』"
+      ignition:1,
+      amplifier:5,
+      falseLead:7,
+      chain:[
+        "A 已經非常具體地指出『那個玩笑讓我不舒服』。",
+        "B 第一反應不是確認界線，而是以『大家都知道』證明自己的意圖無害。",
+        "A 第二次把界線說得更清楚後，B 用『以後都不能開玩笑』極端化對方要求。",
+        "最後一句雖然兇，但修復窗口早已被錯過兩次。"
+      ],
+      report:"起爆點是拿『我沒有惡意』蓋過『對方確實不舒服』；放大點則是把具體界線誇張成全面禁止。",
+      repair:"19:34 最有效的修復是：『我原本是想搞笑，但既然那件事妳不想被講，我之後不拿它開玩笑。』"
+    },
+    {
+      code:"CASE FILE 052",
+      personA:"小咪",
+      personB:"育哲",
+      title:"「都可以」陷阱",
+      brief:"這案沒有明顯攻擊句。要找的是兩個看似和平、其實讓責任慢慢消失的回覆。",
+      chat:[
+        ["12:02","A","週末你比較想去海邊還是看展？"],
+        ["12:04","B","都可以啊，看妳。"],
+        ["12:06","A","可是上次也是我決定，你選一個嘛。"],
+        ["12:07","B","真的都可以，我沒差。"],
+        ["12:10","A","那看展？"],
+        ["12:12","B","可以。"],
+        ["18:46","B","欸我朋友說海邊這週天氣超好。"],
+        ["18:48","A","……那你早上怎麼不講？"]
+      ],
+      ignition:1,
+      amplifier:3,
+      falseLead:6,
+      chain:[
+        "第一次『都可以』仍可能只是體貼。",
+        "A 已明確要求 B 也投入決策，這時需求已經非常清楚。",
+        "B 第二次仍說『我沒差』，正式把共同決策再次丟回 A。",
+        "晚上突然提出偏好才讓早上的被動變得可見，但那不是事故起點。"
+      ],
+      report:"這案的起爆點與放大點都不是衝突語氣，而是兩次連續退出共同決策。第二次『真的都可以，我沒差』尤其關鍵，因為 A 已經明確要求他參與。",
+      repair:"12:07 可以回：『那我選看展，我比較想去那個新展。妳如果也可以，我來看票跟時間。』"
     }
   ];
 
-  let idx=0,score=0,locked=false;
+  let index=0;
+  let score=0;
+  let selected=[];
+  let locked=false;
 
   const caseNum=document.getElementById("fxCaseNum");
   const scoreEl=document.getElementById("fxScore");
 
-  function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+  function esc(s){
+    return String(s??"").replace(/[&<>"']/g,m=>({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[m]));
+  }
+
+  function roleLabel(role,c){
+    return role==="A" ? c.personA : c.personB;
+  }
 
   function render(){
-    if(idx>=cases.length){
+    if(index>=cases.length){
       caseNum.textContent="COMPLETE";
       scoreEl.textContent=score;
+
+      const max=cases.length*2;
+      const ratio=score/max;
+      let title="事故現場實習生";
+      let desc="你常能看到哪句最難聽，但還需要練習往前找『對話方向第一次被改變』的位置。";
+      if(ratio>=.9){
+        title="首席關係鑑識官";
+        desc="你抓得到起爆點，也分得出後面的放大效應與單純結果，不容易被最刺耳的那句帶走。";
+      }else if(ratio>=.7){
+        title="高風險對話鑑識合格";
+        desc="大多數事故鏈都能還原，但少數案例仍會把『爆炸結果』誤認成『事故起點』。";
+      }else if(ratio>=.4){
+        title="證據定位仍有偏差";
+        desc="你已經能察覺高風險句，但對『哪一句先改變框架、哪一句只是惡化』還不夠穩定。";
+      }
+
       app.innerHTML=`
         <div class="fx-final">
           <div>
             <small>FORENSICS COMPLETE</small>
-            <strong>${score}/${cases.length}</strong>
-            <h3>${score===3?"首席關係鑑識官":score===2?"高風險句辨識合格":score===1?"仍需現場實習":"建議先不要碰手機"}</h3>
-            <p>${score===3
-              ?"你能快速定位真正讓局勢惡化的回覆，不容易被表面那句「沒事」騙過。"
-              :score===2
-              ?"大部分事故點抓得到，但在高壓對話裡仍可能把『最後爆炸』誤認成『最早失誤』。"
-              :"你目前比較容易看到結果，卻忽略前面那句已經改變對話方向的關鍵回覆。"}</p>
+            <strong>${score}/${max}</strong>
+            <h3>${title}</h3>
+            <p>${desc}</p>
             <button class="vn2-primary" id="fxRestart">重新鑑識 →</button>
           </div>
         </div>`;
-      document.getElementById("fxRestart").onclick=()=>{idx=0;score=0;locked=false;scoreEl.textContent="0";render();};
+
+      document.getElementById("fxRestart").onclick=()=>{
+        index=0;score=0;selected=[];locked=false;scoreEl.textContent="0";render();
+      };
       return;
     }
 
-    const c=cases[idx];
-    caseNum.textContent=String(idx+1).padStart(2,"0")+" / "+String(cases.length).padStart(2,"0");
-    scoreEl.textContent=score;
+    const c=cases[index];
+    selected=[];
     locked=false;
+    caseNum.textContent=String(index+1).padStart(2,"0")+" / "+String(cases.length).padStart(2,"0");
+    scoreEl.textContent=score;
 
     app.innerHTML=`
       <div class="fx-topline">
         <span class="fx-code">${c.code}</span>
-        <span class="fx-status">EVIDENCE STATUS・VERIFIED</span>
+        <span class="fx-status">EVIDENCE STATUS・UNRESOLVED</span>
       </div>
+
+      <div class="fx-participants">${esc(c.personB)} × ${esc(c.personA)}</div>
       <h3 class="fx-title">${c.title}</h3>
       <p class="fx-brief">${c.brief}</p>
 
-      <div class="fx-layout">
-        <div class="fx-phone">
-          <div class="fx-phone-head">CHAT LOG・事故現場原始紀錄</div>
-          <div class="fx-chat">
-            ${c.chat.map((m,i)=>`<div class="fx-msg ${m[0]} ${i===3&&idx!==1?"":""}">${esc(m[1])}</div>`).join("")}
+      <div class="fx-advanced-layout">
+        <div>
+          <div class="fx-phone">
+            <div class="fx-phone-head">CHAT LOG・點選兩則證據（先起爆、後放大）</div>
+            <div class="fx-chat fx-evidence-chat">
+              ${c.chat.map((m,i)=>`
+                <button class="fx-evidence-msg ${m[1]==="A"?"party-a":"party-b"}" data-evidence="${i}">
+                  <span class="fx-evidence-index">E${String(i+1).padStart(2,"0")}</span>
+                  <span class="fx-evidence-meta">${esc(m[0])}・${esc(roleLabel(m[1],c))}</span>
+                  <span class="fx-evidence-text">${esc(m[2].replace(/^A：/,c.personA+"：").replace(/^B：/,c.personB+"："))}</span>
+                  <span class="fx-evidence-order"></span>
+                </button>
+              `).join("")}
+            </div>
           </div>
         </div>
 
-        <div class="fx-panel">
-          <small>FORENSIC QUESTION</small>
-          <div class="fx-question">${c.q}</div>
-          <div class="fx-options">
-            ${c.options.map((o,i)=>`<button class="fx-option" data-fx-answer="${i}">${String.fromCharCode(65+i)}・${esc(o)}</button>`).join("")}
+        <div class="fx-investigation">
+          <small>FORENSIC TASK</small>
+          <h4>重建事故鏈</h4>
+          <p>依序點選：</p>
+          <div class="fx-slots">
+            <div class="fx-slot" id="fxSlot1">
+              <span>01</span>
+              <div><b>起爆點</b><small>第一次讓對話方向偏掉的證據</small></div>
+            </div>
+            <div class="fx-slot" id="fxSlot2">
+              <span>02</span>
+              <div><b>放大點</b><small>讓原本問題升級的第二個決策</small></div>
+            </div>
           </div>
+
+          <div class="fx-investigation-note">
+            注意：最兇、最冷、最後一句，不一定是事故起點。
+          </div>
+
+          <button class="vn2-primary fx-submit-evidence" id="fxSubmit" disabled>提交兩項證據 →</button>
+          <button class="fx-clear" id="fxClear" disabled>清除重選</button>
+
           <div id="fxReport"></div>
         </div>
       </div>`;
   }
 
-  app.addEventListener("click",e=>{
-    const btn=e.target.closest("[data-fx-answer]");
-    if(!btn||locked)return;
-    locked=true;
-    const chosen=Number(btn.dataset.fxAnswer);
-    const c=cases[idx];
-    const all=[...app.querySelectorAll("[data-fx-answer]")];
-
-    all.forEach((b,i)=>{
-      if(i===c.correct)b.classList.add("correct");
-      else if(i===chosen)b.classList.add("wrong");
-      b.disabled=true;
+  function updateSelection(){
+    [...app.querySelectorAll("[data-evidence]")].forEach(btn=>{
+      const i=Number(btn.dataset.evidence);
+      const pos=selected.indexOf(i);
+      btn.classList.toggle("selected",pos!==-1);
+      const order=btn.querySelector(".fx-evidence-order");
+      order.textContent=pos===0?"起爆":pos===1?"放大":"";
     });
 
-    if(chosen===c.correct)score++;
-    scoreEl.textContent=score;
+    const c=cases[index];
+    const slots=[
+      document.getElementById("fxSlot1"),
+      document.getElementById("fxSlot2")
+    ];
+    selected.forEach((msgIdx,pos)=>{
+      const msg=c.chat[msgIdx];
+      slots[pos].classList.add("filled");
+      slots[pos].querySelector("small").textContent=`E${String(msgIdx+1).padStart(2,"0")}・${msg[2]}`;
+    });
+    for(let i=selected.length;i<2;i++){
+      slots[i].classList.remove("filled");
+      slots[i].querySelector("small").textContent=i===0
+        ?"第一次讓對話方向偏掉的證據"
+        :"讓原本問題升級的第二個決策";
+    }
 
-    const report=document.getElementById("fxReport");
-    report.innerHTML=`
-      <div class="fx-report">
-        <b>${chosen===c.correct?"鑑識成立・定位正確":"鑑識偏差・真正事故點在別處"}</b>
-        <p>${c.report}</p>
-        <p class="fx-repair">${c.repair}</p>
-        <button class="vn2-primary fx-next" id="fxNext">${idx===cases.length-1?"查看鑑識結果 →":"下一案 →"}</button>
-      </div>`;
+    document.getElementById("fxSubmit").disabled=selected.length!==2;
+    document.getElementById("fxClear").disabled=selected.length===0;
+  }
 
-    document.getElementById("fxNext").onclick=()=>{idx++;render();};
+  app.addEventListener("click",e=>{
+    const evidence=e.target.closest("[data-evidence]");
+    if(evidence && !locked){
+      const i=Number(evidence.dataset.evidence);
+
+      if(selected.includes(i)){
+        selected=selected.filter(x=>x!==i);
+      }else if(selected.length<2){
+        selected.push(i);
+      }else{
+        selected[1]=i;
+      }
+      updateSelection();
+      return;
+    }
+
+    if(e.target.closest("#fxClear") && !locked){
+      selected=[];
+      updateSelection();
+      return;
+    }
+
+    if(e.target.closest("#fxSubmit") && !locked && selected.length===2){
+      locked=true;
+      const c=cases[index];
+
+      let earned=0;
+      if(selected[0]===c.ignition)earned++;
+      if(selected[1]===c.amplifier)earned++;
+      score+=earned;
+      scoreEl.textContent=score;
+
+      [...app.querySelectorAll("[data-evidence]")].forEach(btn=>{
+        btn.disabled=true;
+        const i=Number(btn.dataset.evidence);
+        if(i===c.ignition)btn.classList.add("answer-ignition");
+        if(i===c.amplifier)btn.classList.add("answer-amplifier");
+        if(i===c.falseLead)btn.classList.add("false-lead");
+      });
+
+      const label=earned===2
+        ?"事故鏈完整重建"
+        :earned===1
+          ?"定位一半正確"
+          :"事故鏈定位偏差";
+
+      document.getElementById("fxReport").innerHTML=`
+        <div class="fx-report fx-advanced-report">
+          <b>${label}・本案 +${earned}/2</b>
+          <p>${c.report}</p>
+
+          <div class="fx-chain">
+            <small>ACCIDENT RECONSTRUCTION</small>
+            ${c.chain.map((x,i)=>`
+              <div><span>${String(i+1).padStart(2,"0")}</span><p>${x}</p></div>
+            `).join("")}
+          </div>
+
+          <div class="fx-legend">
+            <span><i class="ig"></i>起爆點 E${String(c.ignition+1).padStart(2,"0")}</span>
+            <span><i class="am"></i>放大點 E${String(c.amplifier+1).padStart(2,"0")}</span>
+            <span><i class="fl"></i>誤導線索 E${String(c.falseLead+1).padStart(2,"0")}</span>
+          </div>
+
+          <p class="fx-repair"><b>修復窗口：</b>${c.repair}</p>
+          <button class="vn2-primary fx-next" id="fxNext">${index===cases.length-1?"查看鑑識總結 →":"下一案 →"}</button>
+        </div>`;
+
+      document.getElementById("fxNext").onclick=()=>{index++;render();};
+    }
   });
 
   render();
